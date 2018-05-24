@@ -13,14 +13,27 @@ app.use(function(request,response,next){//use =egal welcher request kommt
     response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST');//welche methode
     response.setHeader('Access-Control-Request-Headers','Content-Type');
     next();//bleibt in use hängen sonst
-
 });
 */
+//app.use(bp.urlencoded({extended:false})); // x-www-form-urlencoded
+app.use(bp.json());//application-json
+
 
 app.post('/circle',function(request,response){
     console.log('POST Request an server');
-    console.log(request.body);
-    response.end( 'Test');
+    console.log('Request Body'+request.body);
+    var r = request.body.radius;
+    var u = 2*r*Math.PI.toFixed(2);
+    var f = r*r*Math.PI.toFixed(2);
+    console.log('radius'+r);
+    var responseData ={
+       umfang:u,
+       flaeche:f
+   };
+   //response.setHeader('Content-Type','application/json');
+   var thejson = JSON.stringify(responseData);
+    response.end(thejson);
+
 
 });
 app.get('/',function(request,response){
