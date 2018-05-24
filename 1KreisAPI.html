@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KreisberechnenAPi</title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+    //Postman api beschreibungen
+        $(document).on('click','#sendenrequest',function(o){
+            e.preventDefault();
+            var eingabe = $('#radius').val()*1;
+
+            $.ajax({
+                url:http//:localhost:3008/circle,
+                type:'POST',
+                contentType:'application/json',//automatisch wäre x-www-urlencoded
+                data:JSON.stringify({radius:eingabe}),//stringify weil JSON
+                dataType:'JSON',//daten die zurückkommen//aka responseFormat
+                success:function(responseData){
+                    $('<hr>').appendTo('body');
+                    $('<div>').appendTo('body').append( $('<div>').html('Radius:'+eingabe))
+                    $('<div>').appendTo('body').append( $('<div>').html('Umfang:'+responseData.umfang))
+                    $('<div>').appendTo('body').append( $('<div>').html('Fläche:'+responseData.flaeche))
+                }
+            })//.done(function(){});//promise lösung //wie success function
+
+        });
+    </script>
+</head>
+<style media="screen">
+    *{
+        font:1.5rem Arial;
+    }
+</style>
+<body>
+    <h1>Kreis berechnen API</h1>
+    Radius: <input type="text" name="" id="radius" value="">
+    <button type="button" id="sendenrequest" name="button">Umfang und Fläche berechnen</button>
+</body>
+</html>
