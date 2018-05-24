@@ -1,20 +1,125 @@
-Schnittstelle zum Kreis berchnen:
+RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern in highscore.json datei speichern
 
-URL: htttp://localhost:3008/circle
-REQUEST-Methode: POST
+URL: htttp://localhost:3008/highscore //ENDPOINT
+REQUEST-Methode: GET
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
-    radius: Number
+    amount: 0 = alle, Number
 
 RESPONSE: Erfolg
     RESPONSE-HTTP-Status:200
-    RESPONSE-Format: JSON (od. TEXT, HTML,XML,JSONP)
+    RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
     RESPONSE-Daten-:
-    {
-        umfang:Number,
-        flaeche: Number
 
+    [{
+        id:Number
+        highscore:Number,
+        name: String
+
+    },{
+        id:Number
+        highscore:Number,
+        name: String
     }
+    ]
 
 RESPONSE: Fehler
     RESPONSE-HTTP-Status:500
+
+
+URL: htttp://localhost:3008/speichern
+REQUEST-Methode: POST
+Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
+REQUEST-Daten:
+    highscore: Number
+    name: STRING
+
+        RESPONSE: Erfolg
+            RESPONSE-HTTP-Status:200
+            RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
+            RESPONSE-Daten-:
+
+
+        RESPONSE: Fehler
+            RESPONSE-HTTP-Status:500
+
+
+URL: htttp://localhost:3008/löschen
+REQUEST-Methode: DELETE
+Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
+REQUEST-Daten:
+
+
+RESPONSE: Erfolg
+RESPONSE-HTTP-Status:200
+RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
+RESPONSE-Daten-:
+
+    true
+
+RESPONSE: Fehler
+RESPONSE-HTTP-Status:500
+
+
+
+URL: htttp://localhost:3008/filtered
+REQUEST-Methode: POST
+Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
+REQUEST-Daten:
+    [
+    {id: STRING
+    },{
+    id:STRING
+    }
+    ]
+
+    RESPONSE: Erfolg
+        RESPONSE-HTTP-Status:200
+        RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
+        RESPONSE-Daten-:
+
+        [{
+            id:Number,
+            highscore:Number,
+            name: String
+
+        },{
+            id:Number,
+            highscore:Number,
+            name: String
+        }
+        ]
+
+    RESPONSE: Fehler
+        RESPONSE-HTTP-Status:500
+
+        URL: htttp://localhost:3008/ändern
+        REQUEST-Methode: PUT
+        Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
+        REQUEST-Daten:
+            [
+            {id: STRING
+            },{
+            id:STRING
+            }
+            ]
+
+            RESPONSE: Erfolg
+                RESPONSE-HTTP-Status:200
+                RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
+                RESPONSE-Daten-:
+
+                [{
+                    id:Number,
+                    highscore:Number,
+                    name: String
+
+                },{
+                    id:Number,
+                    highscore:Number,
+                    name: String
+                }
+                ]
+
+            RESPONSE: Fehler
+                RESPONSE-HTTP-Status:500

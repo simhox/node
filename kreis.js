@@ -12,6 +12,7 @@ app.use(function(request,response,next){//use =egal welcher request kommt
     response.setHeader('Access-Control-Allow-Origin','*');//von jeder source//alternativ auf ip adressen einschränken
     response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST');//welche methode
     response.setHeader('Access-Control-Request-Headers','Content-Type');
+    response.setHeader('Access-Control-Allow-Headers');
     next();//bleibt in use hängen sonst
 });
 */
