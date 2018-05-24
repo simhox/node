@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>KreisberechnenAPi</title>
-    <script src="jquery-3.3.1.min.js"></script>
+    <script src="j"></script><!-- siehe kreis.js-->
     <script type="text/javascript">
     //Postman api beschreibungen
-        $(document).on('click','#sendenrequest',function(o){
+        $(document).on('click','#sendenrequest',function(e){
             e.preventDefault();
             var eingabe = $('#radius').val()*1;
 
             $.ajax({
-                url:http//:localhost:3008/circle,
+                url:"http://localhost:3008/circle",
                 type:'POST',
                 contentType:'application/json',//automatisch wäre x-www-urlencoded
                 data:JSON.stringify({radius:eingabe}),//stringify weil JSON
