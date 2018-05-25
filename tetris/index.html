@@ -3,6 +3,7 @@
 <head>
   <title>Javascript Tetris</title>
   <script src="j"></script>
+  <script src="jquery-3.3.1.min.js"></script>
   <style>
     body      { font-family: Helvetica, sans-serif; }
     #tetris   { margin: 1em auto; padding: 1em; border: 4px solid black; border-radius: 10px; background-color: #F8F8F8; }
@@ -41,16 +42,20 @@
 
   <script src="stats.js"></script>
   <script>
-
-
+    var name = "player 1";
+    console.log(score);
     //on lose()
-    function saveHighscores(){
+    function saveHighscore(){
+        console.log("saveHighscore called");
         $.ajax({
             url:"http://localhost:3000/speichern",
             method:"POST",
             contentType:"JSON",
             data:JSON.stringify({highscore:score,name:name}),//echte variablen einfügen
-
+            dataType:"JSON",
+            success:function(){
+                console.log("Daten gespeichert");
+            }
 
         })
 
@@ -252,7 +257,7 @@
     //-------------------------------------------------------------------------
 
     function play() { hide('start'); reset();          playing = true;  }
-    function lose() { show('start'); setVisualScore(); playing = false; }
+    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore(); }
 
     function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
     function setScore(n)            { score = n; setVisualScore(n);  }
