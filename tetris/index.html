@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Javascript Tetris</title>
+  <script src="j"></script>
   <style>
     body      { font-family: Helvetica, sans-serif; }
     #tetris   { margin: 1em auto; padding: 1em; border: 4px solid black; border-radius: 10px; background-color: #F8F8F8; }
@@ -40,6 +41,21 @@
 
   <script src="stats.js"></script>
   <script>
+
+
+    //on lose()
+    function saveHighscores(){
+        $.ajax({
+            url:"http://localhost:3000/speichern",
+            method:"POST",
+            contentType:"JSON",
+            data:JSON.stringify({highscore:score,name:name}),//echte variablen einfügen
+
+
+        })
+
+    }
+
 
     //-------------------------------------------------------------------------
     // base helper methods
