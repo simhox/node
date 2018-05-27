@@ -9,8 +9,14 @@ app.listen('3000',function(){
     console.log('server started on 3000');
 });
 
-app.use(serve(__dirname+'/tetris'));
+app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
 
+
+app.post('/speichern',function(request,response){
+console.log('post speichern called');
+
+
+});
 
 
 // app.get('/',function(request,response){
@@ -20,7 +26,7 @@ app.use(serve(__dirname+'/tetris'));
 //     // console.log(__dirname+'/tetris/stats.js');
 // });
 
-app.get('/j',function(request,response){
-    response.sendFile(__dirname+'/jquery-3.3.1.min.js');
-
-})
+// app.get('/j',function(request,response){
+//     response.sendFile(__dirname+'/jquery-3.3.1.min.js');
+//
+// })
