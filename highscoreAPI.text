@@ -1,6 +1,6 @@
 RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern in highscore.json datei speichern
 
-URL: htttp://localhost:3008/highscore //ENDPOINT
+URL: htttp://localhost:3001/highscore //ENDPOINT
 REQUEST-Methode: GET
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
@@ -27,7 +27,7 @@ RESPONSE: Fehler
     RESPONSE-HTTP-Status:500
 
 
-URL: htttp://localhost:3008/speichern
+URL: htttp://localhost:3001/speichern
 REQUEST-Methode: POST
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
@@ -44,7 +44,7 @@ REQUEST-Daten:
             RESPONSE-HTTP-Status:500
 
 
-URL: htttp://localhost:3008/löschen
+URL: htttp://localhost:3001/löschen
 REQUEST-Methode: DELETE
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
@@ -62,7 +62,7 @@ RESPONSE-HTTP-Status:500
 
 
 
-URL: htttp://localhost:3008/filtered
+URL: htttp://localhost:3001/filtered
 REQUEST-Methode: POST
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
@@ -93,7 +93,7 @@ REQUEST-Daten:
     RESPONSE: Fehler
         RESPONSE-HTTP-Status:500
 
-        URL: htttp://localhost:3008/ändern
+        URL: htttp://localhost:3001/ändern
         REQUEST-Methode: PUT
         Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
         REQUEST-Daten:

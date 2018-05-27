@@ -28,10 +28,14 @@ app.post('/speichern',function(request,response){
     obj.id = cnt++;
     highscoreList.push(obj);
     console.log(highscoreList);
-        var thejson = {
-        something:'test'
-        }
-        response.end(JSON.stringify(thejson));
+        response.end('success');
+});
+
+app.get('/highscore',function(request,response){
+    console.log("get highscore called");
+    console.log('amount:' +request.body);
+
+    response.end('response sent');
 });
 
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris

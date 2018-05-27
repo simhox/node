@@ -39,7 +39,8 @@
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
     </canvas>
   </div>
-
+<input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
+<button type="button" name="button" id="highscorebtn">Get Highscores!</button>
   <script src="stats.js"></script>
   <script>
     var name = "player 1";
@@ -52,14 +53,32 @@
             method:"POST",
             contentType:"application/json",
             data:JSON.stringify({highscore:score,name:name}),//echte variablen einfügen
-            dataType:"JSON",
+            dataType:"text",
             success:function(responseData){
-                console.log("Daten gespeichert");
+                console.log("Daten gespeichert" +responseData);
             }
 
         })
 
     }
+
+var amount = $('#thehighscore').val();
+    function getHighscore(){
+        console.log("get Highscore called");
+        $.ajax({
+            url:"http://localhost:3001/highscore",
+            method:"GET",
+            contentType:"text",
+            data:amount,
+            dataType:"text",
+            success:function(responseData){
+                console.log(responseData);
+            }
+
+        })
+    }
+
+$(document).on('click','#highscorebtn',getHighscore);
 
 
     //-------------------------------------------------------------------------
