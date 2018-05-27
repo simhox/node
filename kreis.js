@@ -33,7 +33,7 @@ app.post('/circle',function(request,response){
    };
    //response.setHeader('Content-Type','application/json');
    var thejson = JSON.stringify(responseData);
-    response.end(thejson);
+    //response.end(thejson);
 
 
 });
