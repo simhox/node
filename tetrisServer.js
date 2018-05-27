@@ -6,34 +6,39 @@ cors = require('cors');
 
 
 app = express();
-app.use(serve(__dirname+'/'));//lädt alle files im ordner tetris
-app.listen('3001',function(){
-
-    console.log('server started on 3001');
-});
-app.use(bp.urlencoded({extended: false}));
+//app.use(bp.urlencoded({extended: false}));
 app.use(bp.json());//application-json
 //app.use(cors());
 
 app.use(function(request,response,next){//use =egal welcher request kommt
     response.setHeader('Access-Control-Allow-Origin','*');//von jeder source//alternativ auf ip adressen einschränken
-    response.setHeader('Access-Control-Allow-Methods','POST,OPTIONS');//welche methode
+    response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST');//welche methode
     response.setHeader('Access-Control-Request-Headers','Content-Type');
     response.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
     next();//bleibt in use hängen sonst
 });
 
 
-
+var highscoreList =[];
+var cnt =1;
 app.post('/speichern',function(request,response){
-console.log('post speichern called');
-
-    var thejson = {
-    something:'test'
-    }
-    response.end(JSON.stringify(thejson));
+    console.log('post speichern called');
+    // console.log(request.body);
+    var obj = request.body;
+    obj.id = cnt++;
+    highscoreList.push(obj);
+    console.log(highscoreList);
+        var thejson = {
+        something:'test'
+        }
+        response.end(JSON.stringify(thejson));
 });
 
+app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
+app.listen('3001',function(){
+
+    console.log('server started on 3001');
+});
 
 
 // app.get('/',function(request,response){

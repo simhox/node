@@ -48,7 +48,7 @@
     function saveHighscore(){
         console.log("saveHighscore called");
         $.ajax({
-            url:"http://localhost:3000/speichern",
+            url:"http://localhost:3001/speichern",
             method:"POST",
             contentType:"application/json",
             data:JSON.stringify({highscore:score,name:name}),//echte variablen einfügen
