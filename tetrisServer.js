@@ -6,7 +6,7 @@ cors = require('cors');
 
 
 app = express();
-//app.use(bp.urlencoded({extended: false}));
+app.use(bp.urlencoded({extended: false}));
 app.use(bp.json());//application-json
 //app.use(cors());
 
@@ -33,9 +33,24 @@ app.post('/speichern',function(request,response){
 
 app.get('/highscore',function(request,response){
     console.log("get highscore called");
-    console.log('amount:' +request.body);
+    var nmbOfEntries = request.param('amount');
 
-    response.end('response sent');
+
+    if(nmbOfEntries==0){
+        //get all entries
+        response.send(JSON.parse(highscoreList));
+    }else{
+        //get nmbOfEntries
+        var temparr = [];
+        for(var i =0; i<nmbOfEntries;i++){
+            temparr.push(highscoreList[i]);
+        }
+        console.log(temparr);
+
+        if(temparr.length!=0)response.end(JSON.parse(temparr));
+    }
+
+    response.end(JSON.parse(highscoreList));
 });
 
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris

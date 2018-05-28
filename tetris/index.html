@@ -41,6 +41,8 @@
   </div>
 <input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
 <button type="button" name="button" id="highscorebtn">Get Highscores!</button>
+<br>
+<div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
   <script>
     var name = "player 1";
@@ -56,23 +58,28 @@
             dataType:"text",
             success:function(responseData){
                 console.log("Daten gespeichert" +responseData);
+
             }
 
         })
 
     }
 
-var amount = $('#thehighscore').val();
     function getHighscore(){
+        var amount = $('#thehighscore').val();
+        console.log(amount);
         console.log("get Highscore called");
         $.ajax({
             url:"http://localhost:3001/highscore",
             method:"GET",
-            contentType:"text",
-            data:amount,
+            contentType:"application/json",
+            data:{amount: amount},
             dataType:"text",
             success:function(responseData){
-                console.log(responseData);
+                console.log("highscore succeded"+responseData);
+                for(var i=0; i<responseData.length; i++){
+                    console.log(responseData[i]);
+                }
             }
 
         })
