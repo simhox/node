@@ -100,9 +100,9 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
         var id = $('#delete').val();
         console.log(id);
          $.ajax({
-            url:"http://localhost:3001/delete",
+            url:"http://localhost:3001/delete?id="+id+"",
             method:"delete",
-            contentType:"application/json",
+            contentType:"text",
             data:{id:id},
             dataType:"text",
             success:function(theid){

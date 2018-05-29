@@ -61,12 +61,12 @@ app.delete('/delete',function(request,response){
     console.log("delete request called");
     //delete id
     //get id
-    //var id = request.param('id');
-    //console.log('id: '+id);
+    var id = request.param('id');
+    console.log('id: '+id);
     var newArray = highscoreList.filter(function(obj){
         return highscoreList.indexOf(obj.id) ===-1;
     });
-    console.log(newArray);
+    console.log('newARR'+newArray);
     response.end("success");
 
 });
