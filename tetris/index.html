@@ -44,6 +44,10 @@
 
 id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
 <button type="button" name="button" id="deletebtn">löschen!</button>
+
+
+<input type="number" name="" min="0" max="5000" value="0" id="filter">
+<button type="button" name="button" id="filterbtn">FilterHighscore</button>
 <br>
 <div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
@@ -100,9 +104,9 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
         var id = $('#delete').val();
         console.log(id);
          $.ajax({
-            url:"http://localhost:3001/delete",
+            url:"http://localhost:3001/delete?id="+id+"",
             method:"delete",
-            contentType:"application/json",
+            contentType:"text",
             data:{id:id},
             dataType:"text",
             success:function(theid){
@@ -113,8 +117,25 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
          })
     }
 
+    function filter(){
+      var scoretofilter = $('#filter');
+      console.log("filter called");
+        $.ajax({
+          url:"http://localhost:3001/filter",
+          method:"post",
+          contentType:"application/json",
+          data:JSON.stringify({filteramount:scoretofilter}),
+          dataType:"JSON",
+          success:function(responseData){
+            console.log("filter successful");
+          }
+        });
+
+    }
+
 $(document).on('click','#highscorebtn',getHighscore);
 $(document).on('click','#deletebtn',deleteHighscore);
+$(document).on('click','#filterbtn',filter);
 
 
     //-------------------------------------------------------------------------

@@ -12,12 +12,17 @@ app.use(bp.json());//application-json
 
 app.use(function(request,response,next){//use =egal welcher request kommt
     response.setHeader('Access-Control-Allow-Origin','*');//von jeder source//alternativ auf ip adressen einschränken
-    response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST');//welche methode
+    response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST,GET,DELETE');//welche methode
     response.setHeader('Access-Control-Request-Headers','Content-Type');
-    response.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
+    response.setHeader('Access-Control-Allow-Headers','*');
     next();//bleibt in use hängen sonst
 });
 
+// var highscore;
+// fs.readFile('highscore.json',function(err,data){
+// highscore =JSON.parse(data);
+//
+// });
 
 var highscoreList =[];
 var cnt =1;
@@ -61,14 +66,24 @@ app.delete('/delete',function(request,response){
     console.log("delete request called");
     //delete id
     //get id
-    //var id = request.param('id');
+    var id = request.param('id');
     //console.log('id: '+id);
-    var newArray = highscoreList.filter(function(obj){
-        return highscoreList.indexOf(obj.id) ===-1;
+     highscoreList = highscoreList.filter(function(obj){
+        return obj.id != id;
     });
-    console.log(newArray);
+    console.log('highscoreList');
+    console.log( highscoreList);
+
     response.end("success");
 
+});
+
+app.post('/filter',function(req,res){
+  console.log('post filter called');
+  var filteramount = req.body.filteramount;
+  console.log(filteramount);
+
+  res.end(JSON.stringify({success:true}));
 });
 
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
