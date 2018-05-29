@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Javascript Tetris</title>
+  <script src="jquery-3.3.1.min.js"></script>
+
   <style>
     body      { font-family: Helvetica, sans-serif; }
     #tetris   { margin: 1em auto; padding: 1em; border: 4px solid black; border-radius: 10px; background-color: #F8F8F8; }
@@ -37,9 +39,83 @@
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
     </canvas>
   </div>
+<input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
+<button type="button" name="button" id="highscorebtn">Get Highscores!</button>
 
+id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
+<button type="button" name="button" id="deletebtn">löschen!</button>
+<br>
+<div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
   <script>
+    var name = "player 1";
+    console.log(score);
+    //on lose()
+    function saveHighscore(){
+        console.log("saveHighscore called");
+        $.ajax({
+            url:"http://localhost:3001/speichern",
+            method:"POST",
+            contentType:"application/json",
+            data:JSON.stringify({highscore:score,name:name}),//echte variablen einfügen
+            dataType:"text",
+            success:function(responseData){
+                console.log("Daten gespeichert" +responseData);
+
+            }
+
+        })
+
+    }
+
+    function getHighscore(){
+        var amount = $('#thehighscore').val();
+        console.log(amount);
+        console.log("get Highscore called");
+        $.ajax({
+            url:"http://localhost:3001/highscore",
+            method:"GET",
+            contentType:"application/json",
+            data:{amount: amount},
+            dataType:"JSON",
+            success:function(responseData){
+                console.log("highscore succeded"+responseData[0].highscore);
+                //highscoreausgabe
+                for(var key in  responseData){
+                    console.log('hihgscore'+responseData[key].highscore);
+                    console.log('name'+responseData[key].name);
+                    console.log('id'+responseData[key].id);
+                    $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+                    $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+                    $('<hr>').appendTo('#highscoreausgabe');
+
+                }
+
+            }
+
+        })
+    }
+
+    function deleteHighscore(){
+        var id = $('#delete').val();
+        console.log(id);
+         $.ajax({
+            url:"http://localhost:3001/delete",
+            method:"delete",
+            contentType:"application/json",
+            data:{id:id},
+            dataType:"text",
+            success:function(theid){
+                console.log("löschen erfolgreich id:" +theid);
+            }
+
+
+         })
+    }
+
+$(document).on('click','#highscorebtn',getHighscore);
+$(document).on('click','#deletebtn',deleteHighscore);
+
 
     //-------------------------------------------------------------------------
     // base helper methods
@@ -236,7 +312,7 @@
     //-------------------------------------------------------------------------
 
     function play() { hide('start'); reset();          playing = true;  }
-    function lose() { show('start'); setVisualScore(); playing = false; }
+    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore(); }
 
     function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
     function setScore(n)            { score = n; setVisualScore(n);  }
