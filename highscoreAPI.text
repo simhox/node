@@ -1,4 +1,4 @@
-RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern in highscore.json datei speichern
+RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern// in highscore.json datei speichern//writefile readfile 
 
 URL: htttp://localhost:3008/highscore //ENDPOINT
 REQUEST-Methode: GET
