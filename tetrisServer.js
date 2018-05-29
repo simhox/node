@@ -32,6 +32,7 @@ app.post('/speichern',function(request,response){
     var obj = request.body;
     obj.id = cnt++;
     highscoreList.push(obj);
+    sortHighscoreList();
     console.log(highscoreList);
         response.end('success');
 });
