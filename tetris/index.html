@@ -27,8 +27,9 @@
       font-size:1.5em;
       position:relative;
       top:50%;
-      
+      left:30%;
     }
+
   </style>
 
 </head>
@@ -47,8 +48,8 @@
     </canvas>
   </div>
 
-  <input type="text" name=""  value="" id="nameeingabe" placeholder="Name hier eingeben..">
-  <button type="button" name="button" id="startbtn">Start</button>
+    <input type="text" name=""  value="" id="nameeingabe" placeholder="Name hier eingeben..">
+    <button type="button" name="button" id="startbtn">Start</button>
 
 
 <input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
@@ -93,6 +94,7 @@
       $('#namebtn').show();
       $('#nameeingabe').hide();
       $('#startbtn').hide();
+
 
     });
 
@@ -413,7 +415,7 @@ $(document).on('click','#namebtn',editName);
     //-------------------------------------------------------------------------
 
     function play() { hide('start'); reset();          playing = true;  }
-    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore(); }
+    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore();getHighscore(); }
 
     function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
     function setScore(n)            { score = n; setVisualScore(n);  }

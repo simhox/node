@@ -45,17 +45,17 @@ app.get('/highscore',function(request,response){
         //get all entries
         response.end(JSON.stringify(highscoreList));
         console.log('nmbOfEntries = 0');
+        sortHighscoreList();
     }else{
         //get nmbOfEntries
         console.log('nmbOfEntries = '+nmbOfEntries);
 
-        var temparr = [];
+        sortHighscoreList();
         var obj = {};
         for(var i =0; i<nmbOfEntries;i++){
             obj[i]=highscoreList[i];
         }
         console.log('obj:'+JSON.stringify(obj));
-
         response.end(JSON.stringify(obj));
     }
 
@@ -108,6 +108,21 @@ app.post('/editname',function(req,res){
 
   res.end(JSON.stringify(highscoreList));
 });
+
+var sortHighscoreList = function(){
+  console.log("sortHighscoreList called");
+  function compare(a,b) {
+  if (a.highscore < b.highscore)
+    return 1;
+  if (a.highscore > b.highscore)
+    return -1;
+  return 0;
+}
+
+ highscoreList= highscoreList.sort(compare);
+ console.log('sortedHighscoreList= ');
+ console.log( highscoreList);
+}
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
 app.listen('3001',function(){
 
