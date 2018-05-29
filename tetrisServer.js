@@ -35,22 +35,40 @@ app.get('/highscore',function(request,response){
     console.log("get highscore called");
     var nmbOfEntries = request.param('amount');
 
-
+    console.log(nmbOfEntries);
     if(nmbOfEntries==0){
         //get all entries
-        response.send(JSON.parse(highscoreList));
+        response.end(JSON.stringify(highscoreList));
+        console.log('nmbOfEntries = 0');
     }else{
         //get nmbOfEntries
-        var temparr = [];
-        for(var i =0; i<nmbOfEntries;i++){
-            temparr.push(highscoreList[i]);
-        }
-        console.log(temparr);
+        console.log('nmbOfEntries = '+nmbOfEntries);
 
-        if(temparr.length!=0)response.end(JSON.parse(temparr));
+        var temparr = [];
+        var obj = {};
+        for(var i =0; i<nmbOfEntries;i++){
+            obj[i]=highscoreList[i];
+        }
+        console.log('obj:'+JSON.stringify(obj));
+
+        response.end(JSON.stringify(obj));
     }
 
-    response.end(JSON.parse(highscoreList));
+    //response.end(JSON.stringify(highscoreList));
+});
+
+app.delete('/delete',function(request,response){
+    console.log("delete request called");
+    //delete id
+    //get id
+    //var id = request.param('id');
+    //console.log('id: '+id);
+    var newArray = highscoreList.filter(function(obj){
+        return highscoreList.indexOf(obj.id) ===-1;
+    });
+    console.log(newArray);
+    response.end("success");
+
 });
 
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris

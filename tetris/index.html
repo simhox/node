@@ -41,6 +41,9 @@
   </div>
 <input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
 <button type="button" name="button" id="highscorebtn">Get Highscores!</button>
+
+id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
+<button type="button" name="button" id="deletebtn">löschen!</button>
 <br>
 <div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
@@ -74,18 +77,44 @@
             method:"GET",
             contentType:"application/json",
             data:{amount: amount},
-            dataType:"text",
+            dataType:"JSON",
             success:function(responseData){
-                console.log("highscore succeded"+responseData);
-                for(var i=0; i<responseData.length; i++){
-                    console.log(responseData[i]);
+                console.log("highscore succeded"+responseData[0].highscore);
+                //highscoreausgabe
+                for(var key in  responseData){
+                    console.log('hihgscore'+responseData[key].highscore);
+                    console.log('name'+responseData[key].name);
+                    console.log('id'+responseData[key].id);
+                    $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+                    $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+                    $('<hr>').appendTo('#highscoreausgabe');
+
                 }
+
             }
 
         })
     }
 
+    function deleteHighscore(){
+        var id = $('#delete').val();
+        console.log(id);
+         $.ajax({
+            url:"http://localhost:3001/delete",
+            method:"delete",
+            contentType:"application/json",
+            data:{id:id},
+            dataType:"text",
+            success:function(theid){
+                console.log("löschen erfolgreich id:" +theid);
+            }
+
+
+         })
+    }
+
 $(document).on('click','#highscorebtn',getHighscore);
+$(document).on('click','#deletebtn',deleteHighscore);
 
 
     //-------------------------------------------------------------------------

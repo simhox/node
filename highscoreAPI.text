@@ -8,10 +8,10 @@ REQUEST-Daten:
 
 RESPONSE: Erfolg
     RESPONSE-HTTP-Status:200
-    RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
+    RESPONSE-Format: JSON (od. TEXT, HTML,XML,JSONP)
     RESPONSE-Daten-:
 
-    [{
+    {
         id:Number
         highscore:Number,
         name: String
@@ -21,7 +21,7 @@ RESPONSE: Erfolg
         highscore:Number,
         name: String
     }
-    ]
+
 
 RESPONSE: Fehler
     RESPONSE-HTTP-Status:500
@@ -46,8 +46,8 @@ REQUEST-Daten:
 
 URL: htttp://localhost:3001/löschen
 REQUEST-Methode: DELETE
-Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
-REQUEST-Daten:
+Request-Daten-Format:text, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
+REQUEST-Daten: id, number
 
 
 RESPONSE: Erfolg
@@ -55,8 +55,7 @@ RESPONSE-HTTP-Status:200
 RESPONSE-Format: TEXT (od. TEXT, HTML,XML,JSONP)
 RESPONSE-Daten-:
 
-    true
-
+    text
 RESPONSE: Fehler
 RESPONSE-HTTP-Status:500
 
