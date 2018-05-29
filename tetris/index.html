@@ -23,7 +23,14 @@
     @media screen and (min-width: 700px) and (min-height: 700px)  { #tetris { font-size: 1.75em; width: 650px; } #menu { width: 300px; height: 600px; } #upcoming { width: 150px; height: 150px; } #canvas { width: 300px; height: 600px; } } /* 30px chunks */
     @media screen and (min-width: 800px) and (min-height: 800px)  { #tetris { font-size: 2.00em; width: 750px; } #menu { width: 350px; height: 700px; } #upcoming { width: 175px; height: 175px; } #canvas { width: 350px; height: 700px; } } /* 35px chunks */
     @media screen and (min-width: 900px) and (min-height: 900px)  { #tetris { font-size: 2.25em; width: 850px; } #menu { width: 400px; height: 800px; } #upcoming { width: 200px; height: 200px; } #canvas { width: 400px; height: 800px; } } /* 40px chunks */
+    #nameeingabe,#startbtn{
+      font-size:1.5em;
+      position:relative;
+      top:50%;
+      
+    }
   </style>
+
 </head>
 
 <body>
@@ -39,11 +46,16 @@
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
     </canvas>
   </div>
+
+  <input type="text" name=""  value="" id="nameeingabe" placeholder="Name hier eingeben..">
+  <button type="button" name="button" id="startbtn">Start</button>
+
+
 <input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
 <button type="button" name="button" id="highscorebtn">Get Highscores!</button>
 
-id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
-<button type="button" name="button" id="deletebtn">löschen!</button>
+<input type="number" name="" min="0" max="5000" value="0" id="delete">
+<button type="button" name="button" id="deletebtn">id löschen</button>
 
 
 <input type="number" name="" min="0" max="5000" value="0" id="filter">
@@ -55,10 +67,40 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
 <div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
   <script>
-    var name = "player 1";
+
+  $(document).ready(function(){
+    $('#tetris').hide();
+    $('#thehighscore').hide();
+    $('#highscorebtn').hide();
+    $('#deletebtn').hide();
+    $('#delete').hide();
+    $('#filterbtn').hide();
+    $('#filter').hide();
+    $('#name').hide();
+    $('#namebtn').hide();
+
+
+    $('#startbtn').on('click',function(){
+      console.log('start clicked');
+      $('#tetris').show();
+      $('#thehighscore').show();
+      $('#highscorebtn').show();
+      $('#deletebtn').show();
+      $('#delete').show();
+      $('#filterbtn').show();
+      $('#filter').show();
+      $('#name').show();
+      $('#namebtn').show();
+      $('#nameeingabe').hide();
+      $('#startbtn').hide();
+
+    });
+
+  });
     console.log(score);
     //on lose()
     function saveHighscore(){
+      var name = $('#nameeingabe').val();
         console.log("saveHighscore called");
         $.ajax({
             url:"http://localhost:3001/speichern",
@@ -173,6 +215,7 @@ $(document).on('click','#highscorebtn',getHighscore);
 $(document).on('click','#deletebtn',deleteHighscore);
 $(document).on('click','#filterbtn',filter);
 $(document).on('click','#namebtn',editName);
+// $(document).on('click','#start',console.log('start clicked'));
 
 
     //-------------------------------------------------------------------------
