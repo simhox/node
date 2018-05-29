@@ -82,10 +82,32 @@ app.post('/filter',function(req,res){
   console.log('post filter called');
   var filteramount = req.body.filteramount;
   console.log(filteramount);
+  var tempList = highscoreList.filter(function(obj){
+     return obj.highscore > filteramount;
+ });
 
-  res.end(JSON.stringify({success:true}));
+
+  res.end(JSON.stringify(tempList));
 });
 
+app.post('/editname',function(req,res){
+  console.log('post editname called');
+  var id = req.body.id;
+  var name = req.body.name;
+  console.log(id +' '+ name );
+
+  function changeName( id, name ) {
+     for (var i in highscoreList) {
+       if (highscoreList[i].id == id) {
+          highscoreList[i].name = name;
+          break; //Stop this loop, we found it!
+       }
+     }
+  }
+  changeName(id,name);
+
+  res.end(JSON.stringify(highscoreList));
+});
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
 app.listen('3001',function(){
 

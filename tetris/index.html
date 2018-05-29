@@ -48,6 +48,9 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
 
 <input type="number" name="" min="0" max="5000" value="0" id="filter">
 <button type="button" name="button" id="filterbtn">FilterHighscore</button>
+
+<input type="text" name=""  value="tetrisplayer#1" id="name">
+<button type="button" name="button" id="namebtn">EditName(use id)</button>
 <br>
 <div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
@@ -85,6 +88,7 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
             success:function(responseData){
                 console.log("highscore succeded"+responseData[0].highscore);
                 //highscoreausgabe
+                $('#highscoreausgabe').empty();
                 for(var key in  responseData){
                     console.log('hihgscore'+responseData[key].highscore);
                     console.log('name'+responseData[key].name);
@@ -118,7 +122,7 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
     }
 
     function filter(){
-      var scoretofilter = $('#filter');
+      var scoretofilter = $('#filter').val();
       console.log("filter called");
         $.ajax({
           url:"http://localhost:3001/filter",
@@ -128,14 +132,47 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
           dataType:"JSON",
           success:function(responseData){
             console.log("filter successful");
+            //empty ausgabe
+            $('#highscoreausgabe').empty();
+            //show highscore list higher
+            for(var key in  responseData){
+                $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+                $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+                $('<hr>').appendTo('#highscoreausgabe');
+            }
+
           }
         });
 
+    }
+    function editName(){
+      console.log("editName called");
+      var name = $('#name').val();
+      var id = $('#delete').val();
+      $.ajax({
+        url:"http://localhost:3001/editname",
+        method:"post",
+        contentType:"application/json",
+        data:JSON.stringify({id:id,name:name}),
+        dataType:"JSON",
+        success:function(responseData){
+          console.log("editname ajax successful");
+          $('#highscoreausgabe').empty();
+          //show highscore list higher
+          for(var key in  responseData){
+              $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+              $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+              $('<hr>').appendTo('#highscoreausgabe');
+          }
+        }
+
+      });
     }
 
 $(document).on('click','#highscorebtn',getHighscore);
 $(document).on('click','#deletebtn',deleteHighscore);
 $(document).on('click','#filterbtn',filter);
+$(document).on('click','#namebtn',editName);
 
 
     //-------------------------------------------------------------------------
