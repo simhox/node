@@ -9,36 +9,35 @@
 	<script>
 		var socket = io('http://10.135.13.8:26893');
 
+		var user ='';
 		$(document).on('click','button',function(event){
 			event.preventDefault();
-			var user = false;
-			if(!$('#m').val() ){
-				console.log(' val empty');
-			}else{
-				socket.emit('neueruser', $('#m').val());
-				socket.on( 'serversagt', function( text ) {
-					$('<li>' ).appendTo( '#messages' ).html( text );
-				});
+			console.log("button clicked");
 
-			user= true;
-			}
-			socket.on('userset',function(){
+
+
+				if(user !=''){
+					console.log("user is set");
+					socket.emit('clientmessage',$('#m').val());
+				}else{
+					if(!$('#m').val() ){
+						console.log(' val empty');
+					}else{
+						user =$('#m').val();
+						console.log("user is not set, will be set");
+						socket.emit('neueruser', $('#m').val());
+
+						socket.on( 'serversagt', function( text ) {
+							$('<li>' ).appendTo( '#messages' ).html( text );
+						});
+
+					}
+				}
 
 			});
 
 
-			if(user){
-				socket.emit('clientmessage',$('#m').val());
-				socket.on('messagebroadcast',function(data){
-					$('<li>' ).appendTo( '#messages' ).html( data.user +" : "+ data.message );
-				});
-			}
 
-
-
-
-
-		});
 	</script>
 	<style>
 		* { margin: 0; padding: 0; box-sizing: border-box; }

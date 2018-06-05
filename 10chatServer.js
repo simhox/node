@@ -33,8 +33,13 @@ io.on('connection',function(socketConn){
         console.log("Neuer Benutzer "+username+" erstellt.. Anzahl User:"+    countUserString() );
 
     })
+
+
     socketConn.on('clientmessage',function(message){
-        io.emit("messagebroadcast",{username:user,message:message});
+
+            message.replace( /:)/g, "<img src='smiley.jfif'>");
+            io.emit("serversagt",user+": "+ message);
+
     });
 
 });
