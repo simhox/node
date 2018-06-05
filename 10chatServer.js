@@ -8,10 +8,33 @@ var server = app.listen(26893,function(){
 });
 
 var io = socket( server);
+var countUserString = function(){
+    return '( '+i+' sind online)';
+}
+
+var i =0;
 
 io.on('connection',function(socketConn){
-    console.log("neuer benutzer ist verbunden..");
+
+    var user= '';
+    console.log("Verbindung erstellt.. Anzahl User:"+i);
+
     socketConn.on('disconnect',function(){
-        console.log("benutzer hat chat verlassen");
+        if(user!=''){
+            i--;
+            console.log("benutzer hat chat verlassen  Anzahl User:"+i);
+        }
+    });
+
+    socketConn.on('neueruser',function( username ){
+        i++;
+        user = username;
+        io.emit("serversagt",username+' ist online');
+        console.log("Neuer Benutzer "+username+" erstellt.. Anzahl User:"+    countUserString() );
+
     })
+    socketConn.on('clientmessage',function(message){
+        io.emit("messagebroadcast",{username:user,message:message});
+    });
+
 });

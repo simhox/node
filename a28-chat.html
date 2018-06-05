@@ -7,7 +7,38 @@
   <script src="socket.io.slim.js">
   </script>
 	<script>
-		io('http://10.135.13.8:26893');
+		var socket = io('http://10.135.13.8:26893');
+
+		$(document).on('click','button',function(event){
+			event.preventDefault();
+			var user = false;
+			if(!$('#m').val() ){
+				console.log(' val empty');
+			}else{
+				socket.emit('neueruser', $('#m').val());
+				socket.on( 'serversagt', function( text ) {
+					$('<li>' ).appendTo( '#messages' ).html( text );
+				});
+
+			user= true;
+			}
+			socket.on('userset',function(){
+
+			});
+
+
+			if(user){
+				socket.emit('clientmessage',$('#m').val());
+				socket.on('messagebroadcast',function(data){
+					$('<li>' ).appendTo( '#messages' ).html( data.user +" : "+ data.message );
+				});
+			}
+
+
+
+
+
+		});
 	</script>
 	<style>
 		* { margin: 0; padding: 0; box-sizing: border-box; }
