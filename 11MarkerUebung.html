@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MarkerÜbung</title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?callback=machKarte"></script>
+    <script>
+
+    var meineMap;
+    var i = 0;
+    var machKarte = function() {
+    	var kartenoptionen = {
+    		center:{ lat:48.1, lng:16.45 },
+    		zoom:8
+    	}
+    	meineMap = new google.maps.Map( $('#karte').get(0), kartenoptionen );
+
+        //loadPreviousMarkers();
+        meineMap.addListener('click',function(e){
+            placeMarker(e.latLng, meineMap);
+            var markerName = $('#mname').val();
+            var neuerOrt ={
+                id: i,
+                name: markerName,
+                pos: {lat:e.latLng.lat(),lng:e.latLng.lng()}
+                //marker: machMarker(position)
+
+            };
+            i++;
+            //save to db
+            $.ajax({
+                url:"http://localhost:3000/addMarker",
+                method:"post",
+                contentType:"application/json",
+                data:JSON.stringify(neuerOrt),
+                dataType:"JSON",
+                success:function(responseData){
+                    $('#ausgabe').empty();
+                    for(var key in  responseData){
+                        $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="btn"  > Ort löschen</button>'));
+                        //verbinde orte
+                }//end of for
+            }//end of success function
+        });//end of ajax
+    }//end of add event listener
+
+)};//end of machkarte
+    var alleOrte = [];
+    function placeMarker(latLng, map) {
+      var marker = new google.maps.Marker({
+        position: latLng,
+        map: map
+      });
+      //map.panTo(latLng);
+  }
+
+
+
+    </script>
+    <style media="screen">
+        #karte { border:1px solid #000; width:400px; height:300px; }
+        .border {border:1px solid black;}
+    </style>
+</head>
+<body>
+    <div id="karte"></div>
+    <input type="text" id="mname" placeholder="wie heisst der Ort?">
+    <button id="save">Speichern</button>
+    <div id="ausgabe"></div>
+</body>
+</html>
