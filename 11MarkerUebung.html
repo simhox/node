@@ -11,6 +11,7 @@
 
     var meineMap;
     var i = 0;
+    var alleOrte = [];
     var machKarte = function() {
     	var kartenoptionen = {
     		center:{ lat:48.1, lng:16.45 },
@@ -62,13 +63,27 @@
     };
     var clearAndSetMarkers = function(responseData){
         //clearAll Markers from Map
-
+        var markers =[];
+        var temp ={};
         for(var key in responseData){
-
+            //create markers with latlng objs
+            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+            markers.push(temp);
         }
+        for(let i =0; i<markers.length; i++){
+            console.log('markers[i]'+markers[i]);
+            placeMarker(markers[i], meineMap);
+        }
+        console.log('markers'+markers);
+    }
+    //to clear map of all markers
+    function setMapOnAll(map,markers) {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(map);
+      }
     }
 
-    var alleOrte = [];
+
     function placeMarker(latLng, map) {
       var marker = new google.maps.Marker({
         position: latLng,
