@@ -1,4 +1,4 @@
-RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern in highscore.json datei speichern
+RESTful Webservice .. mit methode POST PUT GET DELETE //daten in json datei speichern// in highscore.json datei speichern//writefile readfile
 
 URL: htttp://localhost:3001/highscore //ENDPOINT
 REQUEST-Methode: GET
@@ -65,12 +65,10 @@ URL: htttp://localhost:3001/filtered
 REQUEST-Methode: POST
 Request-Daten-Format:JSON, x-www-url-encoded (auch x-www-form-encoded wäre möglich )
 REQUEST-Daten:
-    [
-    {id: STRING
-    },{
-    id:STRING
+
+    {
+    highscore:amount  
     }
-    ]
 
     RESPONSE: Erfolg
         RESPONSE-HTTP-Status:200

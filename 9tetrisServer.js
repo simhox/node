@@ -12,12 +12,17 @@ app.use(bp.json());//application-json
 
 app.use(function(request,response,next){//use =egal welcher request kommt
     response.setHeader('Access-Control-Allow-Origin','*');//von jeder source//alternativ auf ip adressen einschränken
-    response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST');//welche methode
+    response.setHeader('Access-Control-Allow-Methods','OPTIONS,POST,GET,DELETE');//welche methode
     response.setHeader('Access-Control-Request-Headers','Content-Type');
-    response.setHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept');
+    response.setHeader('Access-Control-Allow-Headers','*');
     next();//bleibt in use hängen sonst
 });
 
+// var highscore;
+// fs.readFile('highscore.json',function(err,data){
+// highscore =JSON.parse(data);
+//
+// });
 
 var highscoreList =[];
 var cnt =1;
@@ -27,6 +32,7 @@ app.post('/speichern',function(request,response){
     var obj = request.body;
     obj.id = cnt++;
     highscoreList.push(obj);
+    sortHighscoreList();
     console.log(highscoreList);
         response.end('success');
 });
@@ -40,17 +46,17 @@ app.get('/highscore',function(request,response){
         //get all entries
         response.end(JSON.stringify(highscoreList));
         console.log('nmbOfEntries = 0');
+        sortHighscoreList();
     }else{
         //get nmbOfEntries
         console.log('nmbOfEntries = '+nmbOfEntries);
 
-        var temparr = [];
+        sortHighscoreList();
         var obj = {};
         for(var i =0; i<nmbOfEntries;i++){
             obj[i]=highscoreList[i];
         }
         console.log('obj:'+JSON.stringify(obj));
-
         response.end(JSON.stringify(obj));
     }
 
@@ -62,15 +68,70 @@ app.delete('/delete',function(request,response){
     //delete id
     //get id
     var id = request.param('id');
+<<<<<<< HEAD:tetrisServer.js
     console.log('id: '+id);
     var newArray = highscoreList.filter(function(obj){
         return highscoreList.indexOf(obj.id) ===-1;
     });
     console.log('newARR'+newArray);
+=======
+    //console.log('id: '+id);
+     highscoreList = highscoreList.filter(function(obj){
+        return obj.id != id;
+    });
+    console.log('highscoreList');
+    console.log( highscoreList);
+
+>>>>>>> 131695d60d5941d432894a152a9f9e6ccf56ece3:9tetrisServer.js
     response.end("success");
 
 });
 
+app.post('/filter',function(req,res){
+  console.log('post filter called');
+  var filteramount = req.body.filteramount;
+  console.log(filteramount);
+  var tempList = highscoreList.filter(function(obj){
+     return obj.highscore > filteramount;
+ });
+
+
+  res.end(JSON.stringify(tempList));
+});
+
+app.post('/editname',function(req,res){
+  console.log('post editname called');
+  var id = req.body.id;
+  var name = req.body.name;
+  console.log(id +' '+ name );
+
+  function changeName( id, name ) {
+     for (var i in highscoreList) {
+       if (highscoreList[i].id == id) {
+          highscoreList[i].name = name;
+          break; //Stop this loop, we found it!
+       }
+     }
+  }
+  changeName(id,name);
+
+  res.end(JSON.stringify(highscoreList));
+});
+
+var sortHighscoreList = function(){
+  console.log("sortHighscoreList called");
+  function compare(a,b) {
+  if (a.highscore < b.highscore)
+    return 1;
+  if (a.highscore > b.highscore)
+    return -1;
+  return 0;
+}
+
+ highscoreList= highscoreList.sort(compare);
+ console.log('sortedHighscoreList= ');
+ console.log( highscoreList);
+}
 app.use(serve(__dirname+'/tetris'));//lädt alle files im ordner tetris
 app.listen('3001',function(){
 

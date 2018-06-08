@@ -23,7 +23,15 @@
     @media screen and (min-width: 700px) and (min-height: 700px)  { #tetris { font-size: 1.75em; width: 650px; } #menu { width: 300px; height: 600px; } #upcoming { width: 150px; height: 150px; } #canvas { width: 300px; height: 600px; } } /* 30px chunks */
     @media screen and (min-width: 800px) and (min-height: 800px)  { #tetris { font-size: 2.00em; width: 750px; } #menu { width: 350px; height: 700px; } #upcoming { width: 175px; height: 175px; } #canvas { width: 350px; height: 700px; } } /* 35px chunks */
     @media screen and (min-width: 900px) and (min-height: 900px)  { #tetris { font-size: 2.25em; width: 850px; } #menu { width: 400px; height: 800px; } #upcoming { width: 200px; height: 200px; } #canvas { width: 400px; height: 800px; } } /* 40px chunks */
+    #nameeingabe,#startbtn{
+      font-size:1.5em;
+      position:relative;
+      top:50%;
+      left:30%;
+    }
+
   </style>
+
 </head>
 
 <body>
@@ -39,19 +47,62 @@
       Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
     </canvas>
   </div>
+
+    <input type="text" name=""  value="" id="nameeingabe" placeholder="Name hier eingeben..">
+    <button type="button" name="button" id="startbtn">Start</button>
+
+
 <input type="number" name="" min="0" max="5000" value="0" id="thehighscore">
 <button type="button" name="button" id="highscorebtn">Get Highscores!</button>
 
-id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
-<button type="button" name="button" id="deletebtn">löschen!</button>
+<input type="number" name="" min="0" max="5000" value="0" id="delete">
+<button type="button" name="button" id="deletebtn">id löschen</button>
+
+
+<input type="number" name="" min="0" max="5000" value="0" id="filter">
+<button type="button" name="button" id="filterbtn">FilterHighscore</button>
+
+<input type="text" name=""  value="tetrisplayer#1" id="name">
+<button type="button" name="button" id="namebtn">EditName(use id)</button>
 <br>
 <div id="highscoreausgabe"></div>
   <script src="stats.js"></script>
   <script>
-    var name = "player 1";
+
+  $(document).ready(function(){
+    $('#tetris').hide();
+    $('#thehighscore').hide();
+    $('#highscorebtn').hide();
+    $('#deletebtn').hide();
+    $('#delete').hide();
+    $('#filterbtn').hide();
+    $('#filter').hide();
+    $('#name').hide();
+    $('#namebtn').hide();
+
+
+    $('#startbtn').on('click',function(){
+      console.log('start clicked');
+      $('#tetris').show();
+      $('#thehighscore').show();
+      $('#highscorebtn').show();
+      $('#deletebtn').show();
+      $('#delete').show();
+      $('#filterbtn').show();
+      $('#filter').show();
+      $('#name').show();
+      $('#namebtn').show();
+      $('#nameeingabe').hide();
+      $('#startbtn').hide();
+
+
+    });
+
+  });
     console.log(score);
     //on lose()
     function saveHighscore(){
+      var name = $('#nameeingabe').val();
         console.log("saveHighscore called");
         $.ajax({
             url:"http://localhost:3001/speichern",
@@ -81,6 +132,7 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
             success:function(responseData){
                 console.log("highscore succeded"+responseData[0].highscore);
                 //highscoreausgabe
+                $('#highscoreausgabe').empty();
                 for(var key in  responseData){
                     console.log('hihgscore'+responseData[key].highscore);
                     console.log('name'+responseData[key].name);
@@ -113,8 +165,59 @@ id:<input type="number" name="" min="0" max="5000" value="0" id="delete">
          })
     }
 
+    function filter(){
+      var scoretofilter = $('#filter').val();
+      console.log("filter called");
+        $.ajax({
+          url:"http://localhost:3001/filter",
+          method:"post",
+          contentType:"application/json",
+          data:JSON.stringify({filteramount:scoretofilter}),
+          dataType:"JSON",
+          success:function(responseData){
+            console.log("filter successful");
+            //empty ausgabe
+            $('#highscoreausgabe').empty();
+            //show highscore list higher
+            for(var key in  responseData){
+                $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+                $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+                $('<hr>').appendTo('#highscoreausgabe');
+            }
+
+          }
+        });
+
+    }
+    function editName(){
+      console.log("editName called");
+      var name = $('#name').val();
+      var id = $('#delete').val();
+      $.ajax({
+        url:"http://localhost:3001/editname",
+        method:"post",
+        contentType:"application/json",
+        data:JSON.stringify({id:id,name:name}),
+        dataType:"JSON",
+        success:function(responseData){
+          console.log("editname ajax successful");
+          $('#highscoreausgabe').empty();
+          //show highscore list higher
+          for(var key in  responseData){
+              $('<div>').appendTo("#highscoreausgabe").html(responseData[key].name);
+              $('<div>').appendTo("#highscoreausgabe").html(responseData[key].highscore);
+              $('<hr>').appendTo('#highscoreausgabe');
+          }
+        }
+
+      });
+    }
+
 $(document).on('click','#highscorebtn',getHighscore);
 $(document).on('click','#deletebtn',deleteHighscore);
+$(document).on('click','#filterbtn',filter);
+$(document).on('click','#namebtn',editName);
+// $(document).on('click','#start',console.log('start clicked'));
 
 
     //-------------------------------------------------------------------------
@@ -312,7 +415,7 @@ $(document).on('click','#deletebtn',deleteHighscore);
     //-------------------------------------------------------------------------
 
     function play() { hide('start'); reset();          playing = true;  }
-    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore(); }
+    function lose() { show('start'); setVisualScore(); playing = false; saveHighscore();getHighscore(); }
 
     function setVisualScore(n)      { vscore = n || score; invalidateScore(); }
     function setScore(n)            { score = n; setVisualScore(n);  }
