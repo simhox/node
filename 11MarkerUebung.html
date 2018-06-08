@@ -38,16 +38,36 @@
                 data:JSON.stringify(neuerOrt),
                 dataType:"JSON",
                 success:function(responseData){
-                    $('#ausgabe').empty();
+                    var route =[];
+                    var tempObj;
+                    writeOutput(responseData);
                     for(var key in  responseData){
-                        $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="btn"  > Ort löschen</button>'));
                         //verbinde orte
+                        tempObj = {lat:responseData[key].pos.lat,lng: responseData[key].pos.lng};
+                        route.push(tempObj);
+
                 }//end of for
+
             }//end of success function
         });//end of ajax
     }//end of add event listener
 
 )};//end of machkarte
+
+    var writeOutput = function(responseData){
+        $('#ausgabe').empty();
+        for(var key in  responseData){
+            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="btn"  > Ort löschen</button>'));
+        }
+    };
+    var clearAndSetMarkers = function(responseData){
+        //clearAll Markers from Map
+
+        for(var key in responseData){
+
+        }
+    }
+
     var alleOrte = [];
     function placeMarker(latLng, map) {
       var marker = new google.maps.Marker({
