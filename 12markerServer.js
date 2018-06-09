@@ -18,7 +18,10 @@ app.use(function(request,response,next){//use =egal welcher request kommt
 
 app.use(bp.json());//application-json
 
-var alleOrte=[];
+var alleOrte;
+fs.readFile( '13marker.json', function( err, data ) {
+  alleOrte = JSON.parse( data );
+} );
 var id = 0;
 app.post('/addMarker',function(request,response){
     console.log('POST Request an server');
@@ -27,10 +30,19 @@ app.post('/addMarker',function(request,response){
    request.body.id = id;
    id++;
    console.log(marker);
-   alleOrte.push(marker);
-   //var thejson = JSON.stringify(responseData);
-    response.end(JSON.stringify(alleOrte));
+   alleOrte.eintraege.push(marker);
+   fs.writeFile( '13marker.json', JSON.stringify( alleOrte ), function() {
+       //könnte man noch was machen...
+    });
 
+   //var thejson = JSON.stringify(responseData);
+    response.end(JSON.stringify(alleOrte.eintraege));
+
+
+});
+app.post('/mapLoaded',function(request,response){
+    console.log('POST Request an server(Map loaded)');
+    response.end(JSON.stringify(alleOrte.eintraege));
 
 });
 app.post('/removeMarker',function(request,response){
@@ -40,9 +52,9 @@ app.post('/removeMarker',function(request,response){
    request.body.id = id;
    id++;
    console.log(marker);
-   alleOrte.push(marker);
+   alleOrte.eintraege.push(marker);
    //var thejson = JSON.stringify(responseData);
-    response.end(JSON.stringify(alleOrte));
+    response.end(JSON.stringify(alleOrte.eintraege));
 
 
 });

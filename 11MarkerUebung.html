@@ -19,9 +19,25 @@
     	}
     	meineMap = new google.maps.Map( $('#karte').get(0), kartenoptionen );
 
+        google.maps.event.addListenerOnce(meineMap, 'idle', function(){
+            // do something only the first time the map is loaded
+            $.ajax({
+                url:"http://localhost:3000/mapLoaded",
+                method:"post",
+                contentType:"text",
+                dataType:"JSON",
+                success:function(responseData){
+                    writeOutput(responseData);
+                    clearAndSetMarkers(responseData);
+
+            }//end of success function
+        });
         //loadPreviousMarkers();
+});
         meineMap.addListener('click',function(e){
-            placeMarker(e.latLng, meineMap);
+            //placeMarker(e.latLng, meineMap);
+            console.log('e.latLNG : ');
+            console.dir(e.latLng);
             var markerName = $('#mname').val();
             var neuerOrt ={
                 id: i,
@@ -39,15 +55,8 @@
                 data:JSON.stringify(neuerOrt),
                 dataType:"JSON",
                 success:function(responseData){
-                    var route =[];
-                    var tempObj;
                     writeOutput(responseData);
-                    for(var key in  responseData){
-                        //verbinde orte
-                        tempObj = {lat:responseData[key].pos.lat,lng: responseData[key].pos.lng};
-                        route.push(tempObj);
-
-                }//end of for
+                    clearAndSetMarkers(responseData);
 
             }//end of success function
         });//end of ajax
@@ -61,20 +70,29 @@
             $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="btn"  > Ort löschen</button>'));
         }
     };
+    /*
+    *nimmtalle marker aus responseData und schreibts in ein orte Obj ums in einen array zu puseh
+    * der array wird dann dazu benutzt jeden marker zu setzen,zuvor wird via setMapOnAll noch jeder Marker aus dermap gelöscht
+    */
+
     var clearAndSetMarkers = function(responseData){
         //clearAll Markers from Map
         var markers =[];
         var temp ={};
+        var marker;
         for(var key in responseData){
             //create markers with latlng objs
             temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
-            markers.push(temp);
+            marker = new google.maps.Marker({
+                position:temp,
+                map:meineMap
+            });
+            markers.push(marker);
         }
+        setMapOnAll(null,markers);
         for(let i =0; i<markers.length; i++){
-            console.log('markers[i]'+markers[i]);
-            placeMarker(markers[i], meineMap);
+            placeMarker(markers[i].position, meineMap);
         }
-        console.log('markers'+markers);
     }
     //to clear map of all markers
     function setMapOnAll(map,markers) {
