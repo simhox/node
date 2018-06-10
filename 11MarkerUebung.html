@@ -66,7 +66,7 @@
                   processData: true,
                   success:function(responseData){
                       writeOutput(responseData);
-                      clearAndSetMarkers(responseData);
+                      //clearAndSetMarkers(responseData);
                   }
               });
         });
@@ -132,7 +132,7 @@
     *nimmtalle marker aus responseData und schreibts in ein orte Obj ums in einen array zu puseh
     * der array wird dann dazu benutzt jeden marker zu setzen,zuvor wird via setMapOnAll noch jeder Marker aus dermap gelöscht
     */
-
+    var aktuelleMarker =[];
     var clearAndSetMarkers = function(responseData){
         //clearAll Markers from Map
         var markers =[];
@@ -147,15 +147,21 @@
             });
             markers.push(marker);
         }
+        aktuelleMarker.push(marker);
+        console.log(aktuelleMarker);
         setMapOnAll(null,markers);
         for(let i =0; i<markers.length; i++){
             placeMarker(markers[i].position, meineMap);
         }
     }
+
     //to clear map of all markers
     function setMapOnAll(map,markers) {
+        console.log("setMapOnAll");
+        console.dir(markers);
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
+        markers[i] = null;
         //markers[i].setVisible(false);
 
       }
@@ -173,10 +179,11 @@
                 map:meineMap
             });
             markers.push(marker);
-            console.log('markers'+markers);
-            console.log(markers);
+
         }
-        setMapOnAll(null,markers);
+        console.log("aktuelle Marker |>");
+        console.log(aktuelleMarker);
+        setMapOnAll(null,aktuelleMarker);
     }
 
     function placeMarker(latLng, map) {
