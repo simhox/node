@@ -29,11 +29,49 @@
                 success:function(responseData){
                     writeOutput(responseData);
                     clearAndSetMarkers(responseData);
-
             }//end of success function
         });
         //loadPreviousMarkers();
-});
+    });
+
+
+
+
+
+
+        $(document).on('click','.deletebtn',function(){
+
+            var theid =$(this).parent().attr("id");
+              var obj = {
+                  id:theid
+              }
+              $.ajax({
+                  url:"http://localhost:3000/singleMarker",
+                  method:"post",
+                  contentType:"application/json",
+                  data:JSON.stringify(obj),
+                  dataType:"JSON",
+                  processData: true,
+                  success:function(responseData){
+                      clearMarker(responseData);
+                  }
+              });
+              //delete id from list via ajax
+              $.ajax({
+                  url:"http://localhost:3000/deleteMarker",
+                  method:"post",
+                  contentType:"application/json",
+                  data:JSON.stringify(obj),
+                  dataType:"JSON",
+                  processData: true,
+                  success:function(responseData){
+                      writeOutput(responseData);
+                      clearAndSetMarkers(responseData);
+                  }
+              });
+        });
+
+
         meineMap.addListener('click',function(e){
             //placeMarker(e.latLng, meineMap);
 
@@ -56,12 +94,33 @@
                 success:function(responseData){
                     writeOutput(responseData);
                     clearAndSetMarkers(responseData);
-
             }//end of success function
         });//end of ajax
     }//end of add event listener
 
 )};//end of machkarte
+// $(document).on('click','.deletebtn',function(){
+//     var theid =$(this).parent().attr("id");
+//       var obj = {
+//           id:theid
+//       }
+//
+//       //delete id from list via ajax
+//       $.ajax({
+//           url:"http://localhost:3000/deleteMarker",
+//           method:"post",
+//           contentType:"application/json",
+//           data:JSON.stringify(obj),
+//           dataType:"JSON",
+//           processData: true,
+//           success:function(responseData){
+//               writeOutput(responseData);
+//               clearAndSetMarkers(responseData);
+//           }
+//       });
+// });//end of document onclick .deletebtn
+
+
 
     var writeOutput = function(responseData){
         $('#ausgabe').empty();
@@ -95,15 +154,33 @@
     }
     //to clear map of all markers
     function setMapOnAll(map,markers) {
-        console.log('set mapon all called');
-        console.log(markers);
       for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(map);
+        markers[i].setMap(null);
+        //markers[i].setVisible(false);
+
       }
     }
-
+    var clearMarker = function(responseData){
+        //clearAll Markers from Map
+        var markers =[];
+        var temp ={};
+        var marker;
+        for(var key in responseData){
+            //create markers with latlng objs
+            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+            marker = new google.maps.Marker({
+                position:temp,
+                map:meineMap
+            });
+            markers.push(marker);
+            console.log('markers'+markers);
+            console.log(markers);
+        }
+        setMapOnAll(null,markers);
+    }
 
     function placeMarker(latLng, map) {
+
       var marker = new google.maps.Marker({
         position: latLng,
         map: map
@@ -111,25 +188,7 @@
       //map.panTo(latLng);
   }
 
-  $(document).on('click','.deletebtn',function(){
-      var theid =$(this).parent().attr("id");
-        var obj = {
-            id:theid
-        }
-        //delete id from list via ajax
-        $.ajax({
-            url:"http://localhost:3000/deleteMarker",
-            method:"post",
-            contentType:"application/json",
-            data:JSON.stringify(obj),
-            dataType:"JSON",
-            processData: true,
-            success:function(responseData){
-                writeOutput(responseData);
-                clearAndSetMarkers(responseData);
-            }
-        });
-  });
+
 
     </script>
     <style media="screen">

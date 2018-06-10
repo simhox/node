@@ -73,12 +73,12 @@ app.post('/deleteMarker',function(request,response){
     readMarkersFromFileIntoAlleOrte();
     var theid = request.body.id;
     theid = theid*1;
-    console.log(request.body);
-    console.log(theid);
+    // console.log(request.body);
+    // console.log(theid);
 
     alleOrte.eintraege = alleOrte.eintraege.filter(x =>x.id !==theid);
 
-    console.log(alleOrte.eintraege);
+    // console.log(alleOrte.eintraege);
     saveMarkersToFile();
 
    // var marker = request.body;
@@ -88,6 +88,21 @@ app.post('/deleteMarker',function(request,response){
    // alleOrte.eintraege.push(marker);
    // //var thejson = JSON.stringify(responseData);
     response.end(JSON.stringify(alleOrte.eintraege));
+
+
+});
+app.post('/singleMarker',function(request,response){
+    console.log('POST Request an server (singleMarker)');
+    var theid = request.body.id;
+    theid = theid*1;
+    // console.log(request.body);
+    // console.log(theid);
+
+    var temparray = alleOrte.eintraege.filter(x =>x.id ===theid);
+
+    console.log(temparray);
+
+    response.end(JSON.stringify(temparray));
 
 
 });
