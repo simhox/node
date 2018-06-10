@@ -36,8 +36,7 @@
 });
         meineMap.addListener('click',function(e){
             //placeMarker(e.latLng, meineMap);
-            console.log('e.latLNG : ');
-            console.dir(e.latLng);
+
             var markerName = $('#mname').val();
             var neuerOrt ={
                 id: i,
@@ -67,7 +66,7 @@
     var writeOutput = function(responseData){
         $('#ausgabe').empty();
         for(var key in  responseData){
-            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="btn"  > Ort löschen</button>'));
+            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
         }
     };
     /*
@@ -96,6 +95,8 @@
     }
     //to clear map of all markers
     function setMapOnAll(map,markers) {
+        console.log('set mapon all called');
+        console.log(markers);
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(map);
       }
@@ -110,7 +111,25 @@
       //map.panTo(latLng);
   }
 
-
+  $(document).on('click','.deletebtn',function(){
+      var theid =$(this).parent().attr("id");
+        var obj = {
+            id:theid
+        }
+        //delete id from list via ajax
+        $.ajax({
+            url:"http://localhost:3000/deleteMarker",
+            method:"post",
+            contentType:"application/json",
+            data:JSON.stringify(obj),
+            dataType:"JSON",
+            processData: true,
+            success:function(responseData){
+                writeOutput(responseData);
+                clearAndSetMarkers(responseData);
+            }
+        });
+  });
 
     </script>
     <style media="screen">

@@ -1,7 +1,7 @@
 var fs = require('fs');//file system//zugriff aufs dateisystem
 var express = require('express');
 var bp = require('body-parser');//INhalte aus Request auslesen!!
-var fs = require('fs');
+
 
 var app = express();
 var server = app.listen(3000,function(){
@@ -26,20 +26,25 @@ var id = 0;
 
 var saveMarkersToFile = function(){
 
-    fs.writeFile( '13marker.json', JSON.stringify( alleOrte ), function() {
+    fs.writeFile( '13marker.json', JSON.stringify( alleOrte ), function(err) {
         //könnte man noch was machen...
+        if(err) throw err;
     });
 
+}
+
+var readMarkersFromFileIntoAlleOrte = function(){
+    fs.readFileSync( '13marker.json',"utf-8", function( err, data ) {
+      alleOrte = JSON.parse( data );
+      console.log(data);
+    } );
 }
 
 
 app.post('/addMarker',function(request,response){
     console.log('POST Request an server');
-   //response.setHeader('Content-Type','application/json');
+    readMarkersFromFileIntoAlleOrte();
    var marker = request.body;
-
-   // id++;
-
    var max=0;
    for(let i =0; i<alleOrte.eintraege.length; i++){
        if(alleOrte.eintraege[i].id > max){
@@ -48,9 +53,6 @@ app.post('/addMarker',function(request,response){
    }
    marker.id = ++max;
    console.log(alleOrte.eintraege);
-   console.log(max);
-   console.log(marker);
-
    alleOrte.eintraege.push(marker);
    saveMarkersToFile();
 
@@ -66,15 +68,25 @@ app.post('/mapLoaded',function(request,response){
     response.end(JSON.stringify(alleOrte.eintraege));
 
 });
-app.post('/removeMarker',function(request,response){
-    console.log('POST Request an server');
-   //response.setHeader('Content-Type','application/json');
-   var marker = request.body;
-   request.body.id = id;
-   id++;
-   console.log(marker);
-   alleOrte.eintraege.push(marker);
-   //var thejson = JSON.stringify(responseData);
+app.post('/deleteMarker',function(request,response){
+    console.log('POST Request an server (remove Marker)');
+    readMarkersFromFileIntoAlleOrte();
+    var theid = request.body.id;
+    theid = theid*1;
+    console.log(request.body);
+    console.log(theid);
+
+    alleOrte.eintraege = alleOrte.eintraege.filter(x =>x.id !==theid);
+
+    console.log(alleOrte.eintraege);
+    saveMarkersToFile();
+
+   // var marker = request.body;
+   // request.body.id = id;
+   // id++;
+   // console.log(marker);
+   // alleOrte.eintraege.push(marker);
+   // //var thejson = JSON.stringify(responseData);
     response.end(JSON.stringify(alleOrte.eintraege));
 
 
