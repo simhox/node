@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script >
+    //icomoon;font awesome (flaticon),bplaced
+    var bilder = ["bilder/das-paradies-fuer-wintersportler.jpg","bilder/endlos-weite-schwuenge-ueber-perfekt-praeparierte-pisten-ziehen.jpg","bilder/erlebnishotel-fendels-familienhit.jpg","bilder\fruehlings-special-top-of-tyrol.jpg"];
+    var value= "bilder/das-paradies-fuer-wintersportler.jpg";
+
+    var aktuell = 0;
+    var showImage = function( i ) {
+        aktuell += i;
+        if(aktuell<0) aktuell = bilder.length-1;//ans ende
+        if(aktuell>bilder.length-1) aktuell = 0;//an den anfang
+
+    	$( '#bilder' ).css({'background-image':'url('+bilder[aktuell]+')'});
+    }
+
+    var showNext = function() {
+    	showImage( 1 );
+    }
+
+    var showPrev = function() {
+    	showImage( -1 );
+    }
+
+    $( document ).on( 'click', '#next', showNext );
+    $( document ).on( 'click', '#prev', showPrev );
+    $(document).ready(function(){
+        showImage(0);
+    });
+
+
+    $(document).on('mousemove','#bilder',function(e){
+
+
+                if(downx==0) return;
+
+                // var diff1= downx-e.originalEvent.clientX
+                // if(diff1 <-100){
+                //     showImage(1);
+                // }
+                // if(diff1>100){
+                //     showImage(-1);
+                // }
+                // $('#bilder').css({left:0,right:0})
+    });
+
+    var downx;
+
+
+    $(document).on('mousedown','#bilder',function(e){
+        console.log(e.originalEvent.clientX);
+        downx= e.originalEvent.clientX;
+
+    });
+
+    $(document).on('mouseup','#bilder',function(e){
+        console.log(e.originalEvent.clientX);
+
+        var diff1= downx-e.originalEvent.clientX
+        if(diff1 <-100){
+            showImage(1);
+        }
+        if(diff1>100){
+            showImage(-1);
+        }
+        $('#bilder').css({left:0,right:0})
+    });
+    var x;
+    $(document).on('mousedown touchstart','#bilder',function(e){
+        console.log("touchstart");
+        console.log(e.originalEvent.touches[0].pageX);
+        console.log(e);
+        x= e.originalEvent.touches[0].pageX;
+
+        if(e.originalEvents.touches[0]){
+            downx=e.originalEvent.touches[0].clientX;
+        }else{
+            downx=e.originalEvent.clientX;
+        }
+
+    });
+
+
+    $(document).on('mouseup touchend','#bilder',function(e){
+
+        try{
+            downx=e.originalEvent.touches[0].clientX;
+
+        }catch(e){
+            var diffx = downx -e.originalEvent.clientX;
+        }
+        console.log("touchend");
+        e.preventDefault();
+        console.log(e);
+        console.log(e.originalEvent.changedTouches[0].clientX);
+        var diff1= x-e.originalEvent.changedTouches[0].clientX;
+        if(diff1 <-100){
+            showImage(1);
+        }
+        if(diff1>100){
+            showImage(-1);
+        }
+
+    });
+    // $(document).on('click','#next',function(){
+    //     console.log('next clicked');
+    //
+    //     index = bilder.indexOf(value);
+    //
+    //         console.log(bilder.length);
+    //         console.log("index:"+index);
+    //         if(index==bilder.length-1){
+    //             console.log("index == bilder.length");
+    //             index = -1;
+    //         }
+    //         value=bilder[index+1];
+    //         nextItem = value;
+    //
+    //     $('#bilder').css('background-image', 'url(' + nextItem + ')');
+    //
+    // });
+    // $(document).on('click','#prev',function(){
+    //     console.log('prev clicked');
+    //
+    //     index = bilder.indexOf(value);
+    //
+    //         //if index min => index max
+    //         if(index==0){
+    //             index == bilder.length+1;
+    //         }
+    //         value=bilder[index-1];
+    //         nextItem = bilder[index - 1];
+    //
+    //     $('#bilder').css('background-image', 'url(' + nextItem + ')');
+    //
+    // });
+
+    </script>
+<style media="screen">
+    #bilder{
+        position:fixed;
+        top:0;
+        right:0;
+        bottom:0;
+        left:0;
+        background:url( )
+        no-repeat center center;
+        background-size:cover;
+    }
+    #bilder div{
+
+        color:#fff;
+        background #000;
+        padding:10px;
+        font-size: 5em;
+        font-weight: bold;
+        position: absolute;
+        top:calc(50%);
+        left:10px;
+        cursor:pointer;
+    }
+    #bilder #next {
+        left:auto;
+        right:10px;
+    }
+</style>
+</head>
+<body>
+    <div id="bilder">
+        <div id="prev">&lt</div>
+        <div id="next">&gt</div>
+    </div>
+</body>
+</html>
