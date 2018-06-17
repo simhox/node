@@ -42,8 +42,10 @@ var readMarkersFromFileIntoAlleOrte = function(){
 
 
 app.post('/addMarker',function(request,response){
-    console.log('POST Request an server');
+    console.log('POST Request an server (add Marker)');
     readMarkersFromFileIntoAlleOrte();
+    console.log(request.body);
+    console.log(request.body.id);
    var marker = request.body;
    var max=0;
    for(let i =0; i<alleOrte.eintraege.length; i++){
@@ -51,7 +53,7 @@ app.post('/addMarker',function(request,response){
            max = alleOrte.eintraege[i].id;
        }
    }
-   marker.id = ++max;
+   //marker.id = ++max;
    console.log(alleOrte.eintraege);
    alleOrte.eintraege.push(marker);
    saveMarkersToFile();

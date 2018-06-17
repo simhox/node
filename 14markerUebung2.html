@@ -125,71 +125,34 @@
     var writeOutput = function(responseData){
         $('#ausgabe').empty();
         for(var key in  responseData){
-            //$('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
+            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
         }
     };
-    /*
-    *nimmtalle marker aus responseData und schreibts in ein orte Obj ums in einen array zu puseh
-    * der array wird dann dazu benutzt jeden marker zu setzen,zuvor wird via setMapOnAll noch jeder Marker aus dermap gelöscht
-    */
-    var aktuelleMarker =[];
-    var clearAndSetMarkers = function(responseData){
-        //clearAll Markers from Map
-        var markers =[];
-        var temp ={};
-        var marker;
+
+
+    var locations=[];
+    placeMarkersIntoArray(responseData){
         for(var key in responseData){
             //create markers with latlng objs
             temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
-            marker = new google.maps.Marker({
-                position:temp,
-                map:meineMap
-            });
-            markers.push(marker);
-        }
-        aktuelleMarker.push(marker);
-        console.log(aktuelleMarker);
-        setMapOnAll(null,markers);
-        var pos;
-        for(let i =0; i<aktuelleMarker.length; i++){
-            console.log(aktuelleMarker[i].position);
-            pos= {
-                lat:aktuelleMarker[i].position.lat(),
-                lng:aktuelleMarker[i].position.lng()
-            }
-            placeMarker(pos, meineMap);
+            locations.push(temp);
         }
     }
+    var markers=[];
+    function setMarkers(locations) {
 
-    //to clear map of all markers
-    function setMapOnAll(map,markers) {
-        // console.log("setMapOnAll");
-        // console.dir(markers);
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-        markers[i] = null;
-        //markers[i].setVisible(false);
+        for (var i = 0; i < locations.length; i++) {
+            var temp = locations[i];
+            var myLatLng = new google.maps.LatLng(temp.lat, temp.lng);
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: meinemap,
 
-      }
-    }
-    var clearMarker = function(responseData){
-        //clearAll Markers from Map
-        var markers =[];
-        var temp ={};
-        var marker;
-        for(var key in responseData){
-            //create markers with latlng objs
-            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
-            marker = new google.maps.Marker({
-                position:temp,
-                map:meineMap
             });
-            markers.push(marker);
 
+            // Push marker to markers array
+            markers.push(marker);
         }
-        console.log("aktuelle Marker |>");
-        console.log(aktuelleMarker);
-        setMapOnAll(null,aktuelleMarker);
     }
 
     function placeMarker(latLng, map) {
