@@ -28,14 +28,51 @@
                 dataType:"JSON",
                 success:function(responseData){
                     writeOutput(responseData);
-                    clearAndSetMarkers(responseData);
+                    placeMarkersIntoArray(responseData);
+                    reloadMarkers();
+                    deletePolylines();
+                    setPolylines(responseData);
             }//end of success function
         });
         //loadPreviousMarkers();
     });
 
-
-
+    $(document).on('click','.up',function(){
+        var id =$(this).parent().attr("id");
+        var obj = {id:id};
+        $.ajax({
+            url:"http://localhost:3000/up",
+            method:"post",
+            contentType:"application/json",
+            data:JSON.stringify(obj),
+            dataType:"JSON",
+            success:function(responseData){
+                writeOutput(responseData);
+                placeMarkersIntoArray(responseData);
+                reloadMarkers();
+                deletePolylines();
+                setPolylines(responseData);
+            }
+        })
+    })
+    $(document).on('click','.down',function(){
+        var id =$(this).parent().attr("id");
+        var obj = {id:id};
+        $.ajax({
+            url:"http://localhost:3000/down",
+            method:"post",
+            contentType:"application/json",
+            data:JSON.stringify(obj),
+            dataType:"JSON",
+            success:function(responseData){
+                writeOutput(responseData);
+                placeMarkersIntoArray(responseData);
+                reloadMarkers();
+                deletePolylines();
+                setPolylines(responseData);
+            }
+        })
+    })
 
 
 
@@ -45,18 +82,7 @@
               var obj = {
                   id:theid
               }
-              $.ajax({
-                  url:"http://localhost:3000/singleMarker",
-                  method:"post",
-                  contentType:"application/json",
-                  data:JSON.stringify(obj),
-                  dataType:"JSON",
-                  processData: true,
-                  success:function(responseData){
-                      clearMarker(responseData);
-                  }
-              });
-              //delete id from list via ajax
+
               $.ajax({
                   url:"http://localhost:3000/deleteMarker",
                   method:"post",
@@ -66,7 +92,10 @@
                   processData: true,
                   success:function(responseData){
                       writeOutput(responseData);
-                      //clearAndSetMarkers(responseData);
+                      placeMarkersIntoArray(responseData);
+                      reloadMarkers();
+                      deletePolylines();
+                      setPolylines(responseData);
                   }
               });
         });
@@ -93,45 +122,27 @@
                 dataType:"JSON",
                 success:function(responseData){
                     writeOutput(responseData);
-                    clearAndSetMarkers(responseData);
+                    placeMarkersIntoArray(responseData);
+                    reloadMarkers();
+                    deletePolylines();
+                    setPolylines(responseData);
             }//end of success function
         });//end of ajax
     }//end of add event listener
 
 )};//end of machkarte
-// $(document).on('click','.deletebtn',function(){
-//     var theid =$(this).parent().attr("id");
-//       var obj = {
-//           id:theid
-//       }
-//
-//       //delete id from list via ajax
-//       $.ajax({
-//           url:"http://localhost:3000/deleteMarker",
-//           method:"post",
-//           contentType:"application/json",
-//           data:JSON.stringify(obj),
-//           dataType:"JSON",
-//           processData: true,
-//           success:function(responseData){
-//               writeOutput(responseData);
-//               clearAndSetMarkers(responseData);
-//           }
-//       });
-// });//end of document onclick .deletebtn
-
-
 
     var writeOutput = function(responseData){
         $('#ausgabe').empty();
         for(var key in  responseData){
-            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
+            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf" class="border up">Rauf!</span> <span id="runter" class="border down">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
         }
     };
 
 
     var locations=[];
-    placeMarkersIntoArray(responseData){
+    function placeMarkersIntoArray(responseData){
+        locations=[];
         for(var key in responseData){
             //create markers with latlng objs
             temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
@@ -139,14 +150,14 @@
         }
     }
     var markers=[];
-    function setMarkers(locations) {
+    function setMarkers(loc) {
 
         for (var i = 0; i < locations.length; i++) {
-            var temp = locations[i];
+            var temp = loc[i];
             var myLatLng = new google.maps.LatLng(temp.lat, temp.lng);
             var marker = new google.maps.Marker({
                 position: myLatLng,
-                map: meinemap,
+                map: meineMap,
 
             });
 
@@ -155,6 +166,17 @@
         }
     }
 
+    function reloadMarkers() {
+        // Loop through markers and set map to null for each
+        for (var i=0; i<markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        // Reset the markers array
+        markers = [];
+        // Call set markers to re-add markers
+        setMarkers(locations);
+    }//end of reloadMarkers
+
     function placeMarker(latLng, map) {
 
       var marker = new google.maps.Marker({
@@ -162,8 +184,45 @@
         map: map
       });
       //map.panTo(latLng);
-  }
+  }//end of placeMarker
 
+
+    var tourPath =[];
+
+
+    var tourPlanCoordinates ;
+      function setPolylines(responseData){
+          tourPlanCoordinates = [];
+          for(var key in responseData){
+              //create markers with latlng objs
+              temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+              tourPlanCoordinates.push(temp);
+          }
+          console.log(tourPlanCoordinates);
+        for(var i = 0 ; i< tourPath.length; i++){
+            tourPath[i] = new google.maps.Polyline({
+                path: tourPlanCoordinates,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+            tourPath[i].setMap(meineMap);
+        }
+
+      }
+      function deletePolylines(){
+          console.log('delPolylines');
+          for(var i = 0 ; i< tourPath.length; i++){
+              tourPath[i] = new google.maps.Polyline({
+                  path: tourPlanCoordinates,
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 1.0,
+                  strokeWeight: 2
+              });
+              tourPath[i].setMap(null);
+              tourPath[i].setVisible(false);
+          }
+      }
 
 
     </script>
