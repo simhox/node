@@ -30,8 +30,9 @@
                     writeOutput(responseData);
                     placeMarkersIntoArray(responseData);
                     reloadMarkers();
-                    deletePolylines();
-                    setPolylines(responseData);
+                    placePosIntoArray(responseData);
+                    reloadPolylines();
+
             }//end of success function
         });
         //loadPreviousMarkers();
@@ -50,8 +51,9 @@
                 writeOutput(responseData);
                 placeMarkersIntoArray(responseData);
                 reloadMarkers();
-                deletePolylines();
-                setPolylines(responseData);
+                placePosIntoArray(responseData);
+                reloadPolylines();
+
             }
         })
     })
@@ -68,8 +70,9 @@
                 writeOutput(responseData);
                 placeMarkersIntoArray(responseData);
                 reloadMarkers();
-                deletePolylines();
-                setPolylines(responseData);
+                placePosIntoArray(responseData);
+                reloadPolylines();
+
             }
         })
     })
@@ -94,8 +97,9 @@
                       writeOutput(responseData);
                       placeMarkersIntoArray(responseData);
                       reloadMarkers();
-                      deletePolylines();
-                      setPolylines(responseData);
+                      placePosIntoArray(responseData);
+                      reloadPolylines();
+
                   }
               });
         });
@@ -124,8 +128,8 @@
                     writeOutput(responseData);
                     placeMarkersIntoArray(responseData);
                     reloadMarkers();
-                    deletePolylines();
-                    setPolylines(responseData);
+                    placePosIntoArray(responseData);
+                    reloadPolylines();
             }//end of success function
         });//end of ajax
     }//end of add event listener
@@ -187,42 +191,50 @@
   }//end of placeMarker
 
 
-    var tourPath =[];
-
-
-    var tourPlanCoordinates ;
-      function setPolylines(responseData){
-          tourPlanCoordinates = [];
-          for(var key in responseData){
-              //create markers with latlng objs
-              temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
-              tourPlanCoordinates.push(temp);
-          }
-          console.log(tourPlanCoordinates);
-        for(var i = 0 ; i< tourPath.length; i++){
-            tourPath[i] = new google.maps.Polyline({
-                path: tourPlanCoordinates,
-                strokeColor: '#FF0000',
-                strokeOpacity: 1.0,
-                strokeWeight: 2
-            });
-            tourPath[i].setMap(meineMap);
+    var posArray=[];
+    function placePosIntoArray(responseData){
+        posArray=[];
+        for(var key in responseData){
+            //create markers with latlng objs
+            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+            posArray.push(temp);
         }
+    }
+    var polylines =[];
+    function setPolylines1(posArray) {
+        console.log("polylines1");
+        console.log(posArray);
+        var tour=[];
+        for (var i = 0; i < posArray.length; i++) {
+            var temp = posArray[i];
+            var myLatLng = new google.maps.LatLng(temp.lat, temp.lng);
+            tour.push(myLatLng);
 
-      }
-      function deletePolylines(){
-          console.log('delPolylines');
-          for(var i = 0 ; i< tourPath.length; i++){
-              tourPath[i] = new google.maps.Polyline({
-                  path: tourPlanCoordinates,
-                  strokeColor: '#FF0000',
-                  strokeOpacity: 1.0,
-                  strokeWeight: 2
-              });
-              tourPath[i].setMap(null);
-              tourPath[i].setVisible(false);
-          }
-      }
+        }
+        console.log(tour);
+        var pline = new google.maps.Polyline({
+            path: tour,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+        polylines.push(pline);
+        console.log(pline);
+        pline.setMap(meineMap);
+    }
+
+        function reloadPolylines() {
+            // Loop through markers and set map to null for each
+            for (var i=0; i<polylines.length; i++) {
+                polylines[i].setMap(null);
+            }
+            // Reset the markers array
+            polylines = [];
+            // Call set markers to re-add markers
+            setPolylines1(posArray);
+        }//end of reloadMarkers
+
+
 
 
     </script>
