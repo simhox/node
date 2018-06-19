@@ -42,8 +42,10 @@ var readMarkersFromFileIntoAlleOrte = function(){
 
 
 app.post('/addMarker',function(request,response){
-    console.log('POST Request an server');
+    console.log('POST Request an server (add Marker)');
     readMarkersFromFileIntoAlleOrte();
+    // console.log(request.body);
+    // console.log(request.body.id);
    var marker = request.body;
    var max=0;
    for(let i =0; i<alleOrte.eintraege.length; i++){
@@ -65,6 +67,49 @@ app.post('/addMarker',function(request,response){
 });
 app.post('/mapLoaded',function(request,response){
     console.log('POST Request an server(Map loaded)');
+    response.end(JSON.stringify(alleOrte.eintraege));
+
+});
+app.post('/up',function(request,response){
+    console.log('POST Request an server(UP called)');
+    var id = request.body.id;
+    var move = function(array, element, delta) {
+        element = element*1;
+      var index = array.map(function(e) { return e.id; }).indexOf(element);
+      //var index = array.indexOf(element);
+      var newIndex = index + delta;
+      if (newIndex < 0  || newIndex == array.length) return; //Already at the top or bottom.
+      var indexes = [index, newIndex].sort(); //Sort the indixes
+      array.splice(indexes[0], 2, array[indexes[1]], array[indexes[0]]); //Replace from lowest index, two elements, reverting the order
+    };
+
+    var moveUp = function(array, element) {
+
+        move(array, element, -1);
+    };
+    moveUp(alleOrte.eintraege, id);
+    saveMarkersToFile();
+    response.end(JSON.stringify(alleOrte.eintraege));
+
+});
+app.post('/down',function(request,response){
+    console.log('POST Request an server(down called)');
+    var id = request.body.id;
+    var move = function(array, element, delta) {
+        element = element*1;
+      var index = array.map(function(e) { return e.id; }).indexOf(element);
+      //var index = array.indexOf(element);
+      var newIndex = index + delta;
+      if (newIndex < 0  || newIndex == array.length) return; //Already at the top or bottom.
+      var indexes = [index, newIndex].sort(); //Sort the indixes
+      array.splice(indexes[0], 2, array[indexes[1]], array[indexes[0]]); //Replace from lowest index, two elements, reverting the order
+    };
+
+    var moveDown = function(array, element) {
+        move(array, element, 1);
+    };
+    moveDown(alleOrte.eintraege, id);
+    saveMarkersToFile();
     response.end(JSON.stringify(alleOrte.eintraege));
 
 });

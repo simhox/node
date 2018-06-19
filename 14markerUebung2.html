@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MarkerÜbung</title>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?callback=machKarte"></script>
+    <script>
+
+    var meineMap;
+    var i = 0;
+    var alleOrte = [];
+    var machKarte = function() {
+    	var kartenoptionen = {
+    		center:{ lat:48.1, lng:16.45 },
+    		zoom:8
+    	}
+    	meineMap = new google.maps.Map( $('#karte').get(0), kartenoptionen );
+
+        google.maps.event.addListenerOnce(meineMap, 'idle', function(){
+            // do something only the first time the map is loaded
+            $.ajax({
+                url:"http://localhost:3000/mapLoaded",
+                method:"post",
+                contentType:"text",
+                dataType:"JSON",
+                success:function(responseData){
+                    writeOutput(responseData);
+                    placeMarkersIntoArray(responseData);
+                    reloadMarkers();
+                    placePosIntoArray(responseData);
+                    reloadPolylines();
+
+            }//end of success function
+        });
+        //loadPreviousMarkers();
+    });
+
+    $(document).on('click','.up',function(){
+        var id =$(this).parent().attr("id");
+        var obj = {id:id};
+        $.ajax({
+            url:"http://localhost:3000/up",
+            method:"post",
+            contentType:"application/json",
+            data:JSON.stringify(obj),
+            dataType:"JSON",
+            success:function(responseData){
+                writeOutput(responseData);
+                placeMarkersIntoArray(responseData);
+                reloadMarkers();
+                placePosIntoArray(responseData);
+                reloadPolylines();
+
+            }
+        })
+    })
+    $(document).on('click','.down',function(){
+        var id =$(this).parent().attr("id");
+        var obj = {id:id};
+        $.ajax({
+            url:"http://localhost:3000/down",
+            method:"post",
+            contentType:"application/json",
+            data:JSON.stringify(obj),
+            dataType:"JSON",
+            success:function(responseData){
+                writeOutput(responseData);
+                placeMarkersIntoArray(responseData);
+                reloadMarkers();
+                placePosIntoArray(responseData);
+                reloadPolylines();
+
+            }
+        })
+    })
+
+
+
+        $(document).on('click','.deletebtn',function(){
+
+            var theid =$(this).parent().attr("id");
+              var obj = {
+                  id:theid
+              }
+
+              $.ajax({
+                  url:"http://localhost:3000/deleteMarker",
+                  method:"post",
+                  contentType:"application/json",
+                  data:JSON.stringify(obj),
+                  dataType:"JSON",
+                  processData: true,
+                  success:function(responseData){
+                      writeOutput(responseData);
+                      placeMarkersIntoArray(responseData);
+                      reloadMarkers();
+                      placePosIntoArray(responseData);
+                      reloadPolylines();
+
+                  }
+              });
+        });
+
+
+        meineMap.addListener('click',function(e){
+            //placeMarker(e.latLng, meineMap);
+
+            var markerName = $('#mname').val();
+            var neuerOrt ={
+                id: i,
+                name: markerName,
+                pos: {lat:e.latLng.lat(),lng:e.latLng.lng()}
+                //marker: machMarker(position)
+
+            };
+            i++;
+            //save to db
+            $.ajax({
+                url:"http://localhost:3000/addMarker",
+                method:"post",
+                contentType:"application/json",
+                data:JSON.stringify(neuerOrt),
+                dataType:"JSON",
+                success:function(responseData){
+                    writeOutput(responseData);
+                    placeMarkersIntoArray(responseData);
+                    reloadMarkers();
+                    placePosIntoArray(responseData);
+                    reloadPolylines();
+            }//end of success function
+        });//end of ajax
+    }//end of add event listener
+
+)};//end of machkarte
+
+    var writeOutput = function(responseData){
+        $('#ausgabe').empty();
+        for(var key in  responseData){
+            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf" class="border up">Rauf!</span> <span id="runter" class="border down">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
+        }
+    };
+
+
+    var locations=[];
+    function placeMarkersIntoArray(responseData){
+        locations=[];
+        for(var key in responseData){
+            //create markers with latlng objs
+            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+            locations.push(temp);
+        }
+    }
+    var markers=[];
+    function setMarkers(loc) {
+
+        for (var i = 0; i < locations.length; i++) {
+            var temp = loc[i];
+            var myLatLng = new google.maps.LatLng(temp.lat, temp.lng);
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: meineMap,
+
+            });
+
+            // Push marker to markers array
+            markers.push(marker);
+        }
+    }
+
+    function reloadMarkers() {
+        // Loop through markers and set map to null for each
+        for (var i=0; i<markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        // Reset the markers array
+        markers = [];
+        // Call set markers to re-add markers
+        setMarkers(locations);
+    }//end of reloadMarkers
+
+    function placeMarker(latLng, map) {
+
+      var marker = new google.maps.Marker({
+        position: latLng,
+        map: map
+      });
+      //map.panTo(latLng);
+  }//end of placeMarker
+
+
+    var posArray=[];
+    function placePosIntoArray(responseData){
+        posArray=[];
+        for(var key in responseData){
+            //create markers with latlng objs
+            temp ={lat:responseData[key].pos.lat,lng:responseData[key].pos.lng};
+            posArray.push(temp);
+        }
+    }
+    var polylines =[];
+    function setPolylines1(posArray) {
+        console.log("polylines1");
+        console.log(posArray);
+        var tour=[];
+        for (var i = 0; i < posArray.length; i++) {
+            var temp = posArray[i];
+            var myLatLng = new google.maps.LatLng(temp.lat, temp.lng);
+            tour.push(myLatLng);
+
+        }
+        console.log(tour);
+        var pline = new google.maps.Polyline({
+            path: tour,
+            strokeColor: '#FF0000',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+        polylines.push(pline);
+        console.log(pline);
+        pline.setMap(meineMap);
+    }
+
+        function reloadPolylines() {
+            // Loop through markers and set map to null for each
+            for (var i=0; i<polylines.length; i++) {
+                polylines[i].setMap(null);
+            }
+            // Reset the markers array
+            polylines = [];
+            // Call set markers to re-add markers
+            setPolylines1(posArray);
+        }//end of reloadMarkers
+
+
+
+
+    </script>
+    <style media="screen">
+        #karte { border:1px solid #000; width:400px; height:300px; }
+        .border {border:1px solid black;}
+    </style>
+</head>
+<body>
+    <div id="karte"></div>
+    <input type="text" id="mname" placeholder="wie heisst der Ort?">
+    <button id="save">Speichern</button>
+    <div id="ausgabe"></div>
+</body>
+</html>

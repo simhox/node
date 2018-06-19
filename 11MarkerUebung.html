@@ -125,7 +125,7 @@
     var writeOutput = function(responseData){
         $('#ausgabe').empty();
         for(var key in  responseData){
-            $('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
+            //$('#ausgabe').append($("<p id='" + responseData[key].id + "'>").html('<span id="rauf'+responseData[key].id+'" class="border">Rauf!</span> <span id="runter'+responseData[key].id+'" class="border">Runter!</span> '+'lng: ' + responseData[key].pos.lng + ', lat:' + responseData[key].pos.lat + ' Ort: ' + responseData[key].name + '<button class="deletebtn"  > Ort löschen</button>'));
         }
     };
     /*
@@ -150,15 +150,21 @@
         aktuelleMarker.push(marker);
         console.log(aktuelleMarker);
         setMapOnAll(null,markers);
-        for(let i =0; i<markers.length; i++){
-            placeMarker(markers[i].position, meineMap);
+        var pos;
+        for(let i =0; i<aktuelleMarker.length; i++){
+            console.log(aktuelleMarker[i].position);
+            pos= {
+                lat:aktuelleMarker[i].position.lat(),
+                lng:aktuelleMarker[i].position.lng()
+            }
+            placeMarker(pos, meineMap);
         }
     }
 
     //to clear map of all markers
     function setMapOnAll(map,markers) {
-        console.log("setMapOnAll");
-        console.dir(markers);
+        // console.log("setMapOnAll");
+        // console.dir(markers);
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
         markers[i] = null;
