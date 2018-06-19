@@ -31,6 +31,14 @@
                      }
 
             }
+            $scope.changeReverse = function(){
+                $scope.isReverse = !$scope.isReverse;
+                if($scope.isReverse){
+                    $scope.arrow = "(&uarr;)";
+                }else{
+                    $scope.arrow = "(&darr;)";
+                }
+            }
 
         });
     </script>
@@ -41,13 +49,13 @@
     <div ng-controller="userController">
         <h2> Anzahl user <span> {{howMuch()}}</span> </h2>
         <input type="text" ng-model="userName"><button type="button" name="button" ng-click="addUser()">Speichern</button>
-        <div ng-repeat="u in users">
+        <div ng-repeat="u in users | orderBy:'-name':isReverse">
             <label>{{u.name}}<!--für jeden user wird ein div tag erstellt -->
             <input type="checkbox" name="" value="" ng-model="u.checked"></label>
 
         </div>
-        <button type="button" name="button" ng-click="deleteUser()">Lösche Markierte Einträge</button>
-    </div>
+        <button type="button" name="button" ng-click="deleteUser()" ng-if="users.length>0">Lösche Markierte Einträge</button>
+        <button type="button" name="button" ng-click="changeReverse()" ng-bind-html="arrow" ng-if="users.length>0" >Sort </button>
 
 </body>
 </html>
