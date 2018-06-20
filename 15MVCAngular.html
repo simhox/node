@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AngularMVC</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"> </script>
+    <script type="text/javascript">
+        var app =angular.module('userApp',[]);
+        app.controller( 'userController', function($scope){
+
+            $scope.users = [];
+            $scope.addUser = function(){
+                $scope.users.push({name:$scope.userName,checked:false});
+                $scope.userName = "";
+            }
+            $scope.howMuch = function(){
+                var anz = $scope.users.length;
+                return anz != 0 ? anz : 'keine'; //bedingte Zuweisung mit ternärem Operartor
+            }
+            $scope.deleteUser = function(){
+                var i = $scope.users.length;
+                     // reversed loop because you change the array
+                     while (i--) {
+                         var user = $scope.users[i];
+                         // If phone is checked, remove from list
+                         if(user.checked) {
+                             $scope.users.splice(i, 1);
+                         }
+                     }
+
+            }
+            $scope.changeReverse = function(){
+                $scope.isReverse = !$scope.isReverse;
+                if($scope.isReverse){
+                    $scope.arrow = "(&uarr;)";
+                }else{
+                    $scope.arrow = "(&darr;)";
+                }
+            }
+
+        });
+    </script>
+    <style >
+    </style>
+</head>
+<body ng-app="userApp">
+    <div ng-controller="userController">
+        <h2> Anzahl user <span> {{howMuch()}}</span> </h2>
+        <input type="text" ng-model="userName"><button type="button" name="button" ng-click="addUser()">Speichern</button>
+        <div ng-repeat="u in users | orderBy:'-name':isReverse">
+            <label>{{u.name}}<!--für jeden user wird ein div tag erstellt -->
+            <input type="checkbox" name="" value="" ng-model="u.checked"></label>
+
+        </div>
+        <button type="button" name="button" ng-click="deleteUser()" ng-if="users.length>0">Lösche Markierte Einträge</button>
+        <button type="button" name="button" ng-click="changeReverse()" ng-bind-html="arrow" ng-if="users.length>0" >Sort </button>
+
+</body>
+</html>
