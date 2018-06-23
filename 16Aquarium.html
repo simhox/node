@@ -16,31 +16,97 @@
         var canvas = document.getElementById('canvas');
         var canvasWidth = canvas.width;
         var canvasHeight = canvas.height;
-        console.log(canvasHeight);
-
+        var canvas = document.getElementsByTagName('canvas')[0];
+        var ctx = canvas.getContext('2d');
 
     /*Daten*********************************************************************/
-    function createSpecies(species,quantity){
+    var arrayOfSpecies= [];
+    function createSpecies(species,quantity,eats){
         var w = window;
         w[species]= [];
-        for(let i =0; i<quantity;i++){
-            w[species].push({
-                species:species,
-                x:Math.random()*canvasWidth,
-                y:Math.random()*canvasHeight,
-                vx:Math.random()*10,
-                vy:Math.random()*10});
-        }
-        console.log(w[species]);
+
+            for(let i =0; i<quantity;i++){
+                w[species].push({
+                    species:species,
+                    x:Math.random()*canvasWidth,
+                    y:Math.random()*canvasHeight,
+                    vx:((Math.random()*7)-3.5),
+                    vy:((Math.random()*7)-3.5),
+                    width:20,
+                    height:9,
+                    eats:eats
+                    })
+            }
+
+        arrayOfSpecies.push(w[species]);
     }
+
+    //console.log(arrayOfSpecies);
     /*Execute*********************************************************************/
-    createSpecies("Qualle",25);
-    var arrayOfSpecies =["Fische","Haie","Algen"];
+    //createSpecies("Qualle",25);
+    var listOfSpecies =[{animal:"Fisch",amount:10,eats:["Algae"]},{animal:"Hai",amount:10,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
+    listOfSpecies.forEach(function(element){
+            createSpecies(element.animal,element.amount,element.eats);
+    });
+    draw();
+    /*Draw*********************************************************************/
+
     function draw(){
-        
+        ctx.clearRect(0,0,canvasWidth,canvasHeight);
+        ctx.beginPath();
+        for(let i = 0;i<arrayOfSpecies.length;i++){
+            for(let j =0; j<arrayOfSpecies[i].length;j++){
+                // console.log(arrayOfSpecies[i][j].species);
+                ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
+                if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x - arrayOfSpecies[i][j].width + arrayOfSpecies[i][j].vx < 0)){
+                    arrayOfSpecies[i][j].vx = - arrayOfSpecies[i][j].vx;
+                }
+                if((arrayOfSpecies[i][j].y + arrayOfSpecies[i][j].vy +arrayOfSpecies[i][j].height > canvasHeight) || (arrayOfSpecies[i][j].y -arrayOfSpecies[i][j].height + arrayOfSpecies[i][j].vy < 0)){
+                    arrayOfSpecies[i][j].vy = - arrayOfSpecies[i][j].vy;
+                }
+                arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
+                arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
+
+                //collision
+                for(let k =0;k< arrayOfSpecies.length;k++){
+                    for(let l=0;l<arrayOfSpecies[k].length;l++){
+                        var o1 = arrayOfSpecies[k][l];
+                        var o2 =arrayOfSpecies[i][j];
+
+                        if(o1.x+o1.width >=o2.x &&
+                            o1.x<=o2.x+o2.width&&
+                            o1.y>=o2.y&&
+                            o1.y<=o2.y+o2.height){
+                                o2.vy= -o2.vy;
+                                o2.vx= -o2.vx;
+                                o1.vx= -o1.vx;
+                                o1.vy= -o1.vy;
+                                if(o2.species!=o1.species){
+                                    console.log("collision:"+o2.species +" "+o1.species);
+                                    //check if eats-> params: species1,species2
+                                        for(let h =0;h<o2.eats.length;h++){
+                                            if(o2.eats[h]==o1.species ){
+                                                console.log(o2.species +"eats");
+                                                //delete o1..(splice), create o2 at same coords
+                                            }//end of if(eats)
+                                        }//end of for h
+                                        for(let m =0;m<o1.eats.length;m++){
+                                            if(o1.eats[m]==o2.species ){
+                                                console.log(o1.species +"eats");
+                                                //delete o2..(splice), create o1 at same coords
+                                            }//end of if eats
+                                        }//end of for
+                                    }//end of if Species=species
 
 
-    }
+                            }//end of if
+                    }//end of k loop(inner)
+                }//end of l loop(outer)
+
+            }//end of inner for loop
+        }//end of outer for loop
+        cancelMe = requestAnimationFrame(draw);
+    }//end of draw
 
 });//end of document.ready function
 
