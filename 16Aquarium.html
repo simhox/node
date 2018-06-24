@@ -30,10 +30,10 @@
                     species:species,
                     x:Math.random()*canvasWidth,
                     y:Math.random()*canvasHeight,
-                    vx:((Math.random()*7)-3.5),
-                    vy:((Math.random()*7)-3.5),
-                    width:20,
-                    height:9,
+                    vx:((Math.random()*10)-3.5),
+                    vy:((Math.random()*10)-3.5),
+                    width:60,
+                    height:60,
                     eats:eats
                     })
             }
@@ -41,23 +41,30 @@
         arrayOfSpecies.push(w[species]);
     }
 
-    //console.log(arrayOfSpecies);
+    console.log(arrayOfSpecies);
     /*Execute*********************************************************************/
     //createSpecies("Qualle",25);
-    var listOfSpecies =[{animal:"Fisch",amount:10,eats:["Algae"]},{animal:"Hai",amount:10,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
+    var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
     listOfSpecies.forEach(function(element){
             createSpecies(element.animal,element.amount,element.eats);
     });
-    draw();
-    /*Draw*********************************************************************/
 
+    /*Draw*********************************************************************/
+    var cancelMe = "";
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
-        for(let i = 0;i<arrayOfSpecies.length;i++){
-            for(let j =0; j<arrayOfSpecies[i].length;j++){
-                // console.log(arrayOfSpecies[i][j].species);
+        loopi:
+        for(let i = arrayOfSpecies.length -1;i>=0;i--){
+
+            for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
+                 //console.log(arrayOfSpecies[i][j].species);
                 ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
+                // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
+                // ctx.fillText("y: "+arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+20);
+                // ctx.fillText("i: "+i,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+30);
+                // ctx.fillText("j: "+j,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+40);
+
                 if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x - arrayOfSpecies[i][j].width + arrayOfSpecies[i][j].vx < 0)){
                     arrayOfSpecies[i][j].vx = - arrayOfSpecies[i][j].vx;
                 }
@@ -66,13 +73,36 @@
                 }
                 arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
                 arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
-
                 //collision
+
                 for(let k =0;k< arrayOfSpecies.length;k++){
                     for(let l=0;l<arrayOfSpecies[k].length;l++){
+                        for(var h=0; h<arrayOfSpecies.length;h++){
+                            console.log(arrayOfSpecies);
+                            if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
+                                console.log("game over");
+                                cancelMe = cancelAnimationFrame(cancelMe);
+                                return;
+                            }
+                        }
+
                         var o1 = arrayOfSpecies[k][l];
                         var o2 =arrayOfSpecies[i][j];
-
+                        // console.log("k:"+k);
+                        // console.log("l:"+l);
+                        // console.log(arrayOfSpecies[k]);
+                        // console.log(arrayOfSpecies[k][l]);
+                        //
+                        // console.log("i:"+i);
+                        // console.log("j:"+j);
+                        // console.log(arrayOfSpecies[i]);
+                        // console.log(arrayOfSpecies[i][j]);
+                        // // if(arrayOfSpecies[i][j]==undefined){
+                        // //     j= j-1;
+                        // // }
+                        // console.log("j:"+j);
+                        // console.log(arrayOfSpecies);
+                        //console.log(o1.x);
                         if(o1.x+o1.width >=o2.x &&
                             o1.x<=o2.x+o2.width&&
                             o1.y>=o2.y&&
@@ -82,18 +112,75 @@
                                 o1.vx= -o1.vx;
                                 o1.vy= -o1.vy;
                                 if(o2.species!=o1.species){
-                                    console.log("collision:"+o2.species +" "+o1.species);
+                                    //console.log("collision:"+o2.species +" "+o1.species);
                                     //check if eats-> params: species1,species2
                                         for(let h =0;h<o2.eats.length;h++){
                                             if(o2.eats[h]==o1.species ){
-                                                console.log(o2.species +"eats");
                                                 //delete o1..(splice), create o2 at same coords
+                                                //var index = arrayOfSpecies[k].indexOf(o1);
+                                                var target = o1;
+                                                var targetKeys =Object.keys(target);
+                                                var index = arrayOfSpecies[k].findIndex(function(entry){
+                                                    var keys = Object.keys(entry);
+                                                    return keys.length==targetKeys.length && keys.every(function(key){
+                                                        return target.hasOwnProperty(key)&&entry[key] === target[key];
+                                                    });
+
+                                                });
+                                                // console.log("index: "+index);
+                                                if(index>-1){
+                                                    // console.log(arrayOfSpecies[k]);
+                                                    arrayOfSpecies[k].splice(index,1);
+                                                    arrayOfSpecies[k].push({
+                                                        species:o2.species,
+                                                        x:o2.x,
+                                                        y:o2.y,
+                                                        vx:((Math.random()*7)-3.5),
+                                                        vy:((Math.random()*7)-3.5),
+                                                        width:20,
+                                                        height:9,
+                                                        eats:o2.eats
+                                                    });
+                                                    // console.log(arrayOfSpecies[k]);
+                                                }//end of splice
+                                                //console.log(o2.x);
+
                                             }//end of if(eats)
                                         }//end of for h
                                         for(let m =0;m<o1.eats.length;m++){
                                             if(o1.eats[m]==o2.species ){
-                                                console.log(o1.species +"eats");
                                                 //delete o2..(splice), create o1 at same coords
+                                                var target = o2;
+                                                var targetKeys =Object.keys(target);
+                                                var index = arrayOfSpecies[i].findIndex(function(entry){
+                                                    var keys = Object.keys(entry);
+                                                    return keys.length==targetKeys.length && keys.every(function(key){
+                                                        return target.hasOwnProperty(key)&&entry[key] === target[key];
+                                                    });
+
+                                                });
+                                                // console.log("index:"+index);
+
+                                                if(index>-1){
+                                                    // console.log("splice o2");
+                                                    // console.log(arrayOfSpecies[i]);
+
+                                                    if(!arrayOfSpecies[i].length==j){
+                                                        arrayOfSpecies[i].splice(index,1);
+                                                        arrayOfSpecies[i].push({
+                                                            species:o1.species,
+                                                            x:o1.x,
+                                                            y:o1.y,
+                                                            vx:((Math.random()*7)-3.5),
+                                                            vy:((Math.random()*7)-3.5),
+                                                            width:20,
+                                                            height:9,
+                                                            eats:o1.eats
+                                                        });
+
+                                                    }
+                                                    // console.log(arrayOfSpecies[i]);
+                                                }//end of splice
                                             }//end of if eats
                                         }//end of for
                                     }//end of if Species=species
@@ -108,6 +195,14 @@
         cancelMe = requestAnimationFrame(draw);
     }//end of draw
 
+    $(document).on("click","#start",function(){
+        console.log("start clicked");
+        requestAnimationFrame(draw);
+
+    });
+
+
+
 });//end of document.ready function
 
 </script>
@@ -120,7 +215,7 @@
     Haie    <input type="text" id="inputshark"name="" value="" min="0" max="40"><br>
     Fische  <input type="text" id="inputfish"name="" value="" min="0" max="40"><br>
     Plankton<input type="text" id="inputalgae"name="" value="" min="0" max="40"><br>
-    <button type="button" name="button">Start</button><br>
+    <button type="button" name="button" id="start">Start</button><br>
 <canvas id="canvas" width="1400" height="800">
 </body>
 </html>
