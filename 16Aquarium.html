@@ -69,6 +69,9 @@
         draw();
         increaseHighscore();
     }
+
+    var image = new Image();
+    image.src ="fish.png";
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
@@ -78,6 +81,9 @@
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
                  //console.log(arrayOfSpecies[i][j].species);
                 ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
+                // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+                ctx.drawImage(image,50,50,50,50,100,100,50,50);
+
                 // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
                 // ctx.fillText("y: "+arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+20);
                 // ctx.fillText("i: "+i,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+30);
