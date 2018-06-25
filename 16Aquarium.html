@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Aquarium</title>
     <script src="jquery-3.3.1.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
 </head>
 <script>
     //eigene liste für arten(h,f,a)
@@ -30,8 +31,8 @@
                     species:species,
                     x:Math.random()*canvasWidth,
                     y:Math.random()*canvasHeight,
-                    vx:((Math.random()*10)-3.5),
-                    vy:((Math.random()*10)-3.5),
+                    vx:((Math.random()*100)-3.5),
+                    vy:((Math.random()*100)-3.5),
                     width:60,
                     height:60,
                     eats:eats
@@ -51,6 +52,23 @@
 
     /*Draw*********************************************************************/
     var cancelMe = "";
+    var highscore =0;
+    var currentTime = new Date();
+    var milliseconds = 1000;
+    var time ;
+    function increaseHighscore(){
+        time = new Date();
+        if(time-currentTime>milliseconds){
+            highscore++;
+            currentTime= new Date();
+            $('#highscore').html('Score: '+highscore);
+        }
+        console.log(highscore);
+    }
+    function loop(){
+        draw();
+        increaseHighscore();
+    }
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
@@ -78,7 +96,7 @@
                 for(let k =0;k< arrayOfSpecies.length;k++){
                     for(let l=0;l<arrayOfSpecies[k].length;l++){
                         for(var h=0; h<arrayOfSpecies.length;h++){
-                            console.log(arrayOfSpecies);
+                            // console.log(arrayOfSpecies);
                             if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
                                 console.log("game over");
                                 cancelMe = cancelAnimationFrame(cancelMe);
@@ -192,12 +210,12 @@
 
             }//end of inner for loop
         }//end of outer for loop
-        cancelMe = requestAnimationFrame(draw);
+        cancelMe = requestAnimationFrame(loop);
     }//end of draw
 
     $(document).on("click","#start",function(){
         console.log("start clicked");
-        requestAnimationFrame(draw);
+        requestAnimationFrame(loop);
 
     });
 
@@ -210,12 +228,17 @@
     #canvas{
         background-color: lightblue;
     }
+    .highscore{
+        font-size: 1.5em;
+        font-family: Press Start 2P;
+    }
 </style>
 <body>
     Haie    <input type="text" id="inputshark"name="" value="" min="0" max="40"><br>
     Fische  <input type="text" id="inputfish"name="" value="" min="0" max="40"><br>
     Plankton<input type="text" id="inputalgae"name="" value="" min="0" max="40"><br>
     <button type="button" name="button" id="start">Start</button><br>
+    <div id="highscore"class="highscore">Score:</div>
 <canvas id="canvas" width="1400" height="800">
 </body>
 </html>
