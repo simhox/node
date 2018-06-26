@@ -22,33 +22,45 @@
 
     /*Daten*********************************************************************/
     var arrayOfSpecies= [];
-    function createSpecies(species,quantity,eats){
+    function createSpecies(species,quantity,eats,fishSprite){
         var w = window;
         w[species]= [];
 
             for(let i =0; i<quantity;i++){
+
                 w[species].push({
                     species:species,
                     x:Math.random()*canvasWidth,
                     y:Math.random()*canvasHeight,
                     vx:((Math.random()*100)-3.5),
                     vy:((Math.random()*100)-3.5),
-                    width:60,
-                    height:60,
+                    height:fishSprite.heigth,
+                    width:fishSprite.width,
+                    posy:fishSprite.posy,
+                    posx:fishSprite.posx,
                     eats:eats
                     })
             }
-
+        console.log(w[species]);
         arrayOfSpecies.push(w[species]);
     }
 
     console.log(arrayOfSpecies);
     /*Execute*********************************************************************/
-    //createSpecies("Qualle",25);
+    var image1 = new Image();
+    image1.src ="fish.png";
+    var image2 = new Image();
+    image2.src ="seaweed.png";
+    var image3 = new Image();
+    image3.src ="treasures.png";
+    var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56}];
     var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
-    listOfSpecies.forEach(function(element){
-            createSpecies(element.animal,element.amount,element.eats);
-    });
+
+
+    for(let i = 0; i<listOfSpecies.length; i++){
+        console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
+        createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
+    }
 
     /*Draw*********************************************************************/
     var cancelMe = "";
@@ -63,15 +75,15 @@
             currentTime= new Date();
             $('#highscore').html('Score: '+highscore);
         }
-        console.log(highscore);
+
     }
     function loop(){
         draw();
         increaseHighscore();
     }
 
-    var image = new Image();
-    image.src ="fish.png";
+
+
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
@@ -82,7 +94,10 @@
                  //console.log(arrayOfSpecies[i][j].species);
                 ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
                 // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-                ctx.drawImage(image,50,50,50,50,100,100,50,50);
+                //console.log(arrayOfSpecies[i][j]);
+                // console.log('posx:'+arrayOfSpecies[i][j].posx+'posy:'+arrayOfSpecies[i][j].posy);
+                ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x,50,50);
+                ctx.drawImage(image1,50,50,50,50,100,100,50,50);
 
                 // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
                 // ctx.fillText("y: "+arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+20);
@@ -104,7 +119,6 @@
                         for(var h=0; h<arrayOfSpecies.length;h++){
                             // console.log(arrayOfSpecies);
                             if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
-                                console.log("game over");
                                 cancelMe = cancelAnimationFrame(cancelMe);
                                 return;
                             }
@@ -220,7 +234,7 @@
     }//end of draw
 
     $(document).on("click","#start",function(){
-        console.log("start clicked");
+        //console.log("start clicked");
         requestAnimationFrame(loop);
 
     });
@@ -240,9 +254,7 @@
     }
 </style>
 <body>
-    Haie    <input type="text" id="inputshark"name="" value="" min="0" max="40"><br>
-    Fische  <input type="text" id="inputfish"name="" value="" min="0" max="40"><br>
-    Plankton<input type="text" id="inputalgae"name="" value="" min="0" max="40"><br>
+
     <button type="button" name="button" id="start">Start</button><br>
     <div id="highscore"class="highscore">Score:</div>
 <canvas id="canvas" width="1400" height="800">

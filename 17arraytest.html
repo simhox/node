@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery-3.3.1.min.js"></script>
+    <title>arraytest</title>
+</head>
+<script >
+
+    var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
+    var arrayOfObjects = [{a:1,b:2},{a:3,b:4},{a:5,b:6}]
+    var resultArray =[];
+    console.log(listOfSpecies);
+    function run(){
+        for(let i = 0; i<listOfSpecies.length;i++){
+            console.log("for loop  c");
+            createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,arrayOfObjects[i]);
+        }
+    }
+
+    function createSpecies(species,quantity,objects){
+        console.log("createSpecies c");
+        var w = window;
+        w[species]= [];
+
+            for(let i =0; i<quantity;i++){
+
+                w[species].push({
+                    species:species,
+                    a:objects.a
+                    })
+            }
+        console.log(w[species]);
+        resultArray.push(w[species]);
+    }
+
+    function go(){
+        for(let i = 0; i<resultArray.length;i++){
+            for(let j=0; j<resultArray[i].length;j++){
+                console.log(resultArray[i][j]);
+            }
+        }
+    }
+
+$(document).ready(function(){
+    run();
+    go();
+    console.log(resultArray);
+})
+</script>
+<body>
+
+</body>
+</html>
