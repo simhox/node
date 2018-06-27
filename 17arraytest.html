@@ -42,11 +42,15 @@
                 console.log(resultArray[i][j]);
             }
         }
+        requestAnimationFrame(go);
     }
 
+
 $(document).ready(function(){
+
     run();
-    go();
+    requestAnimationFrame(go);
+
     console.log(resultArray);
 })
 </script>

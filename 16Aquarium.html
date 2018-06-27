@@ -21,6 +21,15 @@
         var ctx = canvas.getContext('2d');
 
     /*Daten*********************************************************************/
+    var image1 = new Image();
+    image1.src ="fish.png";
+    var image2 = new Image();
+    image2.src ="seaweed.png";
+    var image3 = new Image();
+    image3.src ="treasures.png";
+    var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56}];
+
+    var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
     var arrayOfSpecies= [];
     function createSpecies(species,quantity,eats,fishSprite){
         var w = window;
@@ -41,24 +50,14 @@
                     eats:eats
                     })
             }
-        console.log(w[species]);
+        //console.log(w[species]);
         arrayOfSpecies.push(w[species]);
     }
 
-    console.log(arrayOfSpecies);
+    //console.log(arrayOfSpecies);
     /*Execute*********************************************************************/
-    var image1 = new Image();
-    image1.src ="fish.png";
-    var image2 = new Image();
-    image2.src ="seaweed.png";
-    var image3 = new Image();
-    image3.src ="treasures.png";
-    var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56}];
-    var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
-
-
     for(let i = 0; i<listOfSpecies.length; i++){
-        console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
+        //console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
         createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
     }
 
@@ -87,16 +86,17 @@
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
-        loopi:
-        for(let i = arrayOfSpecies.length -1;i>=0;i--){
 
+        for(let i = arrayOfSpecies.length -1;i>=0;i--){
+            console.log(arrayOfSpecies);
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
                  //console.log(arrayOfSpecies[i][j].species);
                 ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
+                console.log(arrayOfSpecies[i][j]);
+                //console.log('posx:'+arrayOfSpecies[i][j].posx+'posy:'+arrayOfSpecies[i][j].posy);
                 // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-                //console.log(arrayOfSpecies[i][j]);
-                // console.log('posx:'+arrayOfSpecies[i][j].posx+'posy:'+arrayOfSpecies[i][j].posy);
-                ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x,50,50);
+                console.log("image1"+image1 +"width"+arrayOfSpecies[i][j].width+" x: "+arrayOfSpecies[i][j].x+"posx"+arrayOfSpecies[i][j].posx);
+                ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,20,20);
                 ctx.drawImage(image1,50,50,50,50,100,100,50,50);
 
                 // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
@@ -175,8 +175,10 @@
                                                         y:o2.y,
                                                         vx:((Math.random()*7)-3.5),
                                                         vy:((Math.random()*7)-3.5),
-                                                        width:20,
-                                                        height:9,
+                                                        width:o2.width,
+                                                        height:o2.height,
+                                                        posy:o2.posy,
+                                                        posx:o2.posx,
                                                         eats:o2.eats
                                                     });
                                                     // console.log(arrayOfSpecies[k]);
@@ -211,8 +213,10 @@
                                                             y:o1.y,
                                                             vx:((Math.random()*7)-3.5),
                                                             vy:((Math.random()*7)-3.5),
-                                                            width:20,
-                                                            height:9,
+                                                            width:o1.width,
+                                                            height:o1.height,
+                                                            posy:o1.posy,
+                                                            posx:o1.posx,
                                                             eats:o1.eats
                                                         });
 
