@@ -19,7 +19,6 @@
         var canvasHeight = canvas.height;
         var canvas = document.getElementsByTagName('canvas')[0];
         var ctx = canvas.getContext('2d');
-
     /*Daten*********************************************************************/
     var image1 = new Image();
     image1.src ="fish.png";
@@ -28,21 +27,18 @@
     var image3 = new Image();
     image3.src ="treasures.png";
     var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56}];
-
     var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
     var arrayOfSpecies= [];
     function createSpecies(species,quantity,eats,fishSprite){
         var w = window;
         w[species]= [];
-
             for(let i =0; i<quantity;i++){
-
                 w[species].push({
                     species:species,
                     x:Math.random()*canvasWidth,
                     y:Math.random()*canvasHeight,
-                    vx:((Math.random()*100)-3.5),
-                    vy:((Math.random()*100)-3.5),
+                    vx:((Math.random()*10)-3.5),
+                    vy:((Math.random()*10)-3.5),
                     height:fishSprite.heigth,
                     width:fishSprite.width,
                     posy:fishSprite.posy,
@@ -50,17 +46,17 @@
                     eats:eats
                     })
             }
+
+            console.log('fishSprite width: ' + fishSprite.width + ', fishSprite height: ' + fishSprite.heigth);
         //console.log(w[species]);
         arrayOfSpecies.push(w[species]);
     }
-
     //console.log(arrayOfSpecies);
     /*Execute*********************************************************************/
     for(let i = 0; i<listOfSpecies.length; i++){
         //console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
         createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
     }
-
     /*Draw*********************************************************************/
     var cancelMe = "";
     var highscore =0;
@@ -74,36 +70,34 @@
             currentTime= new Date();
             $('#highscore').html('Score: '+highscore);
         }
-
     }
     function loop(){
         draw();
         increaseHighscore();
     }
-
-
-
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
-
         for(let i = arrayOfSpecies.length -1;i>=0;i--){
-            console.log(arrayOfSpecies);
+            //console.log(arrayOfSpecies);
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
                  //console.log(arrayOfSpecies[i][j].species);
-                ctx.fillText(arrayOfSpecies[i][j].species,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y);
-                console.log(arrayOfSpecies[i][j]);
+
+                //console.log(arrayOfSpecies[i][j]);
                 //console.log('posx:'+arrayOfSpecies[i][j].posx+'posy:'+arrayOfSpecies[i][j].posy);
                 // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-                console.log("image1"+image1 +"width"+arrayOfSpecies[i][j].width+" x: "+arrayOfSpecies[i][j].x+"posx"+arrayOfSpecies[i][j].posx);
-                ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,20,20);
-                ctx.drawImage(image1,50,50,50,50,100,100,50,50);
+                //console.log("image1"+image1 +"width"+arrayOfSpecies[i][j].width+" x: "+arrayOfSpecies[i][j].x+"posx"+arrayOfSpecies[i][j].posx);
 
+                ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height );
+                //console.log(arrayOfSpecies[i][j].posx+" "+arrayOfSpecies[i][j].posy+" "+arrayOfSpecies[i][j].width+" "+arrayOfSpecies[i][j].height+" "+arrayOfSpecies[i][j].x+" "+arrayOfSpecies[i][j].y);
+                // ctx.beginPath();
+                // ctx.rect(arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height);
+                // ctx.stroke();
+                //arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,20,20);
                 // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
                 // ctx.fillText("y: "+arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+20);
                 // ctx.fillText("i: "+i,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+30);
                 // ctx.fillText("j: "+j,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+40);
-
                 if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x - arrayOfSpecies[i][j].width + arrayOfSpecies[i][j].vx < 0)){
                     arrayOfSpecies[i][j].vx = - arrayOfSpecies[i][j].vx;
                 }
@@ -114,139 +108,154 @@
                 arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
                 //collision
 
-                for(let k =0;k< arrayOfSpecies.length;k++){
-                    for(let l=0;l<arrayOfSpecies[k].length;l++){
-                        for(var h=0; h<arrayOfSpecies.length;h++){
-                            // console.log(arrayOfSpecies);
-                            if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
-                                cancelMe = cancelAnimationFrame(cancelMe);
-                                return;
-                            }
-                        }
-
-                        var o1 = arrayOfSpecies[k][l];
-                        var o2 =arrayOfSpecies[i][j];
-                        // console.log("k:"+k);
-                        // console.log("l:"+l);
-                        // console.log(arrayOfSpecies[k]);
-                        // console.log(arrayOfSpecies[k][l]);
-                        //
-                        // console.log("i:"+i);
-                        // console.log("j:"+j);
-                        // console.log(arrayOfSpecies[i]);
-                        // console.log(arrayOfSpecies[i][j]);
-                        // // if(arrayOfSpecies[i][j]==undefined){
-                        // //     j= j-1;
-                        // // }
-                        // console.log("j:"+j);
-                        // console.log(arrayOfSpecies);
-                        //console.log(o1.x);
-                        if(o1.x+o1.width >=o2.x &&
-                            o1.x<=o2.x+o2.width&&
-                            o1.y>=o2.y&&
-                            o1.y<=o2.y+o2.height){
-                                o2.vy= -o2.vy;
-                                o2.vx= -o2.vx;
-                                o1.vx= -o1.vx;
-                                o1.vy= -o1.vy;
-                                if(o2.species!=o1.species){
-                                    //console.log("collision:"+o2.species +" "+o1.species);
-                                    //check if eats-> params: species1,species2
-                                        for(let h =0;h<o2.eats.length;h++){
-                                            if(o2.eats[h]==o1.species ){
-                                                //delete o1..(splice), create o2 at same coords
-                                                //var index = arrayOfSpecies[k].indexOf(o1);
-                                                var target = o1;
-                                                var targetKeys =Object.keys(target);
-                                                var index = arrayOfSpecies[k].findIndex(function(entry){
-                                                    var keys = Object.keys(entry);
-                                                    return keys.length==targetKeys.length && keys.every(function(key){
-                                                        return target.hasOwnProperty(key)&&entry[key] === target[key];
-                                                    });
-
-                                                });
-                                                // console.log("index: "+index);
-                                                if(index>-1){
-                                                    // console.log(arrayOfSpecies[k]);
-                                                    arrayOfSpecies[k].splice(index,1);
-                                                    arrayOfSpecies[k].push({
-                                                        species:o2.species,
-                                                        x:o2.x,
-                                                        y:o2.y,
-                                                        vx:((Math.random()*7)-3.5),
-                                                        vy:((Math.random()*7)-3.5),
-                                                        width:o2.width,
-                                                        height:o2.height,
-                                                        posy:o2.posy,
-                                                        posx:o2.posx,
-                                                        eats:o2.eats
-                                                    });
-                                                    // console.log(arrayOfSpecies[k]);
-                                                }//end of splice
-                                                //console.log(o2.x);
-
-                                            }//end of if(eats)
-                                        }//end of for h
-                                        for(let m =0;m<o1.eats.length;m++){
-                                            if(o1.eats[m]==o2.species ){
-                                                //delete o2..(splice), create o1 at same coords
-                                                var target = o2;
-                                                var targetKeys =Object.keys(target);
-                                                var index = arrayOfSpecies[i].findIndex(function(entry){
-                                                    var keys = Object.keys(entry);
-                                                    return keys.length==targetKeys.length && keys.every(function(key){
-                                                        return target.hasOwnProperty(key)&&entry[key] === target[key];
-                                                    });
-
-                                                });
-                                                // console.log("index:"+index);
-
-                                                if(index>-1){
-                                                    // console.log("splice o2");
-                                                    // console.log(arrayOfSpecies[i]);
-
-                                                    if(!arrayOfSpecies[i].length==j){
-                                                        arrayOfSpecies[i].splice(index,1);
-                                                        arrayOfSpecies[i].push({
-                                                            species:o1.species,
-                                                            x:o1.x,
-                                                            y:o1.y,
-                                                            vx:((Math.random()*7)-3.5),
-                                                            vy:((Math.random()*7)-3.5),
-                                                            width:o1.width,
-                                                            height:o1.height,
-                                                            posy:o1.posy,
-                                                            posx:o1.posx,
-                                                            eats:o1.eats
-                                                        });
-
-                                                    }
-                                                    // console.log(arrayOfSpecies[i]);
-                                                }//end of splice
-                                            }//end of if eats
-                                        }//end of for
-                                    }//end of if Species=species
-
-
-                            }//end of if
-                    }//end of k loop(inner)
-                }//end of l loop(outer)
-
             }//end of inner for loop
         }//end of outer for loop
+
+        for(let k =0;k< arrayOfSpecies.length;k++){
+            for(let l=0;l<arrayOfSpecies[k].length;l++){
+                //check if finished
+                // for(var h=0; h<arrayOfSpecies.length;h++){
+                //      console.log(arrayOfSpecies);
+                //     if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
+                //         cancelMe = cancelAnimationFrame(cancelMe);
+                //         return;
+                //     }
+                // }
+                var o1 = arrayOfSpecies[k][l];
+                var o2;
+
+                for(var hh = 0; hh < arrayOfSpecies.length;hh++){
+                    for(let mm =0;mm<arrayOfSpecies[hh].length;mm++){
+
+                        if(hh == k && mm == l)
+                            continue;
+
+                        o2 = arrayOfSpecies[hh][mm];
+
+                    // console.log("k:"+k);
+                    // console.log("l:"+l);
+                    // console.log(arrayOfSpecies[k]);
+                    // console.log(arrayOfSpecies[k][l]);
+                    //
+                    // console.log("i:"+i);
+                    // console.log("j:"+j);
+                    // console.log(arrayOfSpecies[i]);
+                    // console.log(arrayOfSpecies[i][j]);
+                    // // if(arrayOfSpecies[i][j]==undefined){
+                    // //     j= j-1;
+                    // // }
+                    // console.log("j:"+j);
+                    // console.log(arrayOfSpecies);
+                    // //console.log(o1.x);
+
+                    // if(o1.x+o1.width >= o2.x &&
+                    //     o1.x<=o2.x+o2.width&&
+                    //     o1.y>=o2.y&&
+                    //     o1.y<=o2.y+o2.height){
+
+                    var no_collision = (
+                        o1.x >= o2.x + o2.width ||
+                        o1.x + o1.width <= o2.x ||
+                        o1.y >= o2.y + o2.height ||
+                        o1.y + o1.height < o2.y
+                    );
+
+                    if(no_collision == false){
+                            ctx.fillText(o1.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
+                            ctx.fillText(o2.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
+                            console.log(o2.height);
+                             o2.vy= -o2.vy;
+                             o2.vx= -o2.vx;
+                            //o1.vx= -o1.vx;
+                            //o1.vy= -o1.vy;
+
+                            // if(o2.species!=o1.species){
+                            //     console.log("collision:"+o2.species +" "+o1.species);
+                            //     //check if eats-> params: species1,species2
+                            //         for(let h =0;h<o2.eats.length;h++){
+                            //
+                            //             if(o2.eats[h]==o1.species ){
+                            //                 //delete o1..(splice), create o2 at same coords
+                            //                 //var index = arrayOfSpecies[k].indexOf(o1);
+                            //                 var target = o1;
+                            //                 var targetKeys =Object.keys(target);
+                            //                 var index = arrayOfSpecies[k].findIndex(function(entry){
+                            //                     var keys = Object.keys(entry);
+                            //                     return keys.length==targetKeys.length && keys.every(function(key){
+                            //                         return target.hasOwnProperty(key)&&entry[key] === target[key];
+                            //                     });
+                            //                 });
+                            //                 // console.log("index: "+index);
+                            //                 if(index>-1){
+                            //                     // console.log(arrayOfSpecies[k]);
+                            //                     arrayOfSpecies[k].splice(index,1);
+                            //                     arrayOfSpecies[k].push({
+                            //                         species:o2.species,
+                            //                         x:o2.x,
+                            //                         y:o2.y,
+                            //                         vx:((Math.random()*7)-3.5),
+                            //                         vy:((Math.random()*7)-3.5),
+                            //                         width:o2.width,
+                            //                         height:o2.height,
+                            //                         posy:o2.posy,
+                            //                         posx:o2.posx,
+                            //                         eats:o2.eats
+                            //                     });
+                            //                     // console.log(arrayOfSpecies[k]);
+                            //                 }//end of splice
+                            //                 //console.log(o2.x);
+                            //             }//end of if(eats)
+                            //         }//end of for h
+                            //         for(let m =0;m<o1.eats.length;m++){
+                            //             if(o1.eats[m]==o2.species ){
+                            //                 //delete o2..(splice), create o1 at same coords
+                            //                 var target = o2;
+                            //                 var targetKeys =Object.keys(target);
+                            //                 var index = arrayOfSpecies[k].findIndex(function(entry){
+                            //                     var keys = Object.keys(entry);
+                            //                     return keys.length==targetKeys.length && keys.every(function(key){
+                            //                         return target.hasOwnProperty(key)&&entry[key] === target[key];
+                            //                     });
+                            //                 });
+                            //                 // console.log("index:"+index);
+                            //                 if(index>-1){
+                            //                     // console.log("splice o2");
+                            //                     // console.log(arrayOfSpecies[k]);
+                            //                     if(!arrayOfSpecies[k].length==j){
+                            //                         arrayOfSpecies[k].splice(index,1);
+                            //                         arrayOfSpecies[k].push({
+                            //                             species:o1.species,
+                            //                             x:o1.x,
+                            //                             y:o1.y,
+                            //                             vx:((Math.random()*7)-3.5),
+                            //                             vy:((Math.random()*7)-3.5),
+                            //                             width:o1.width,
+                            //                             height:o1.height,
+                            //                             posy:o1.posy,
+                            //                             posx:o1.posx,
+                            //                             eats:o1.eats
+                            //                         });
+                            //                     }
+                            //                     // console.log(arrayOfSpecies[k]);
+                            //                 }//end of splice
+                            //             }//end of if eats
+                            //         }//end of for
+                            //     }//end of if Species=species
+                            //
+                            }//end of if
+
+                    }
+                }
+            }//end of k loop(inner)
+        }//end of l loop(outer)
+
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
-
     $(document).on("click","#start",function(){
         //console.log("start clicked");
         requestAnimationFrame(loop);
-
     });
-
-
-
 });//end of document.ready function
-
 </script>
 <style >
     #canvas{
