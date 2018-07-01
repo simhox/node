@@ -161,9 +161,9 @@
                     );
 
                     if(no_collision == false){
-                            ctx.fillText(o1.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
-                            ctx.fillText(o2.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
-                            console.log(o2.height);
+                            //ctx.fillText(o1.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
+                            //ctx.fillText(o2.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
+                            //console.log(o2.height);
                              o2.vy= -o2.vy;
                              o2.vx= -o2.vx;
                             //o1.vx= -o1.vx;
@@ -251,6 +251,10 @@
 
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
+
+    function collision(){
+        
+    }
     $(document).on("click","#start",function(){
         //console.log("start clicked");
         requestAnimationFrame(loop);
