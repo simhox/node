@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>arraytest2</title>
+</head>
+<body>
+
+<script>
+var theArray=[];
+
+function insertValues(species,quantity){
+         var temp = [];
+        for(let i =0; i<quantity;i++){
+            temp.push({
+                species:species,
+                randomValue:Math.random()*10
+                })
+                // console.log(theArray);
+        }
+
+    theArray.push(temp);
+}
+
+var listOfSpecies =[{animal:"Fish",amount:5},{animal:"Shark",amount:5},{animal:"Algae",amount:5}];
+
+for(let i = 0; i<listOfSpecies.length; i++){
+    // console.log(i);
+    // console.log(theArray);
+    insertValues(listOfSpecies[i].animal,listOfSpecies[i].amount);
+}
+
+var arrA = ["a","b"];
+var arrB = ["c","d"];
+var arrC =[];
+var newArray = Object.assign([],arrB);
+console.log(newArray);
+var newArray = Object.assign(newArray,arrA);
+console.log(newArray);
+
+</script>
+
+</body>
+</html>

@@ -27,33 +27,86 @@
     var image3 = new Image();
     image3.src ="treasures.png";
     var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56}];
-    var listOfSpecies =[{animal:"Fisch",amount:12,eats:["Algae"]},{animal:"Hai",amount:12,eats:["Fisch"]},{animal:"Algae",amount:12,eats:["Hai"]}];
+    var listOfSpecies =[{animal:"Fisch",amount:5,eats:["Algae"]},{animal:"Hai",amount:5,eats:["Fisch"]},{animal:"Algae",amount:5,eats:["Hai"]}];
     var arrayOfSpecies= [];
     function createSpecies(species,quantity,eats,fishSprite){
-        var w = window;
-        w[species]= [];
+        console.log(arrayOfSpecies);
+        var temparr = [];
+        var x = 0;
+        var y = 0;
+        var cnt =0;
             for(let i =0; i<quantity;i++){
-                w[species].push({
+                x = Math.random()*canvasWidth;
+                y= Math.random()*canvasHeight;
+                while(initial_collision(x,y,fishSprite.width,fishSprite.heigth,arrayOfSpecies)){
+                    // console.log("true");
+                    // console.log("x while :"+x);
+                    // console.log("y while :"+y);
+                    x = Math.random()*canvasWidth;
+                    y= Math.random()*canvasHeight;
+                }
+                //console.log("pushing");
+                temparr.push({
                     species:species,
-                    x:Math.random()*canvasWidth,
-                    y:Math.random()*canvasHeight,
-                    vx:((Math.random()*10)-3.5),
-                    vy:((Math.random()*10)-3.5),
+                    x:x,
+                    y:y,
+                    vx:((Math.random()*1)),
+                    vy:((Math.random()*1)),
                     height:fishSprite.heigth,
                     width:fishSprite.width,
                     posy:fishSprite.posy,
                     posx:fishSprite.posx,
                     eats:eats
                     })
+
             }
 
-            console.log('fishSprite width: ' + fishSprite.width + ', fishSprite height: ' + fishSprite.heigth);
+            //console.log('fishSprite width: ' + fishSprite.width + ', fishSprite height: ' + fishSprite.heigth);
         //console.log(w[species]);
-        arrayOfSpecies.push(w[species]);
+        arrayOfSpecies.push(temparr);
+        console.log(arrayOfSpecies);
     }
-    //console.log(arrayOfSpecies);
+
+    function initial_collision(x,y,width,height,arraytocheck){
+        //console.log("initial collision");
+        //console.log(arraytocheck);
+        for(let k =0;k< arraytocheck.length;k++){
+            console.log("k"+k);
+            for(let l=0;l<arraytocheck[k].length;l++){
+                console.log("l"+l);
+                var o1 = arraytocheck[k][l];
+                var no_collision = (
+                    o1.x >= x + width ||
+                    o1.x + o1.width <= x ||
+                    o1.y >= y + height ||
+                    o1.y + o1.height < y
+                );
+                // var no_collision = (
+                //     o1.x >= o2.x + o2.width ||
+                //     o1.x + o1.width <= o2.x ||
+                //     o1.y >= o2.y + o2.height ||
+                //     o1.y + o1.height < o2.y
+                // );
+
+                if(no_collision == false){
+                    console.log("o1.x :"+o1.x);
+                    console.log("o1.y :"+o1.y);
+                    console.log("y :"+y);
+                    console.log("x :"+x);
+
+
+                    console.log("collision");
+                    return true;
+                }else{
+                    return false;
+                }
+            }//end of l (2nd)
+        }//end of k (first)
+
+    }//initial_collision end
     /*Execute*********************************************************************/
     for(let i = 0; i<listOfSpecies.length; i++){
+        console.log("i"+i);
         //console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
         createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
     }
@@ -104,8 +157,8 @@
                 if((arrayOfSpecies[i][j].y + arrayOfSpecies[i][j].vy +arrayOfSpecies[i][j].height > canvasHeight) || (arrayOfSpecies[i][j].y -arrayOfSpecies[i][j].height + arrayOfSpecies[i][j].vy < 0)){
                     arrayOfSpecies[i][j].vy = - arrayOfSpecies[i][j].vy;
                 }
-                arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
-                arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
+            //    arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
+            //    arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
                 //collision
 
             }//end of inner for loop
@@ -126,6 +179,7 @@
 
                 for(var hh = 0; hh < arrayOfSpecies.length;hh++){
                     for(let mm =0;mm<arrayOfSpecies[hh].length;mm++){
+
 
                         if(hh == k && mm == l)
                             continue;
@@ -161,8 +215,10 @@
                     );
 
                     if(no_collision == false){
-                            //ctx.fillText(o1.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
-                            //ctx.fillText(o2.vy,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
+                            ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
+                            ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
+                            // console.log(arrayOfSpecies[k]);
+                            // console.log(arrayOfSpecies[k][l]);
                             //console.log(o2.height);
                              o2.vy= -o2.vy;
                              o2.vx= -o2.vx;
@@ -252,9 +308,7 @@
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
 
-    function collision(){
-        
-    }
+
     $(document).on("click","#start",function(){
         //console.log("start clicked");
         requestAnimationFrame(loop);
