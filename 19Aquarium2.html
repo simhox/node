@@ -9,9 +9,20 @@
     <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
 </head>
 <script>
-    //eigene liste für arten(h,f,a)
-    //offset, umdrehen (*-1)
-    //max 100
+/*
+*TODO:
+*Auswahl Anzahl Spezies (Auswahl anzahl fische?)
+*Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
+*Fressen und Duplikation
+*Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%)
+*Hintergrundfarbe Fische
+* zusätzliche Sprites (10)
+* wenn möglich Hintergrundsprites
+*Canvas Responsive (Frage anzahl Max Fische)
+*
+*/
+
+
     /*vars **********************************************************************/
     $(document).ready(function(){
         var canvas = document.getElementById('canvas');
@@ -30,27 +41,18 @@
     var listOfSpecies =[{animal:"Fisch",amount:5,eats:["Algae"]},{animal:"Hai",amount:5,eats:["Fisch"]},{animal:"Algae",amount:5,eats:["Hai"]},{animal:"Seestern",amount:3,eats:["Hai"]}];
     var arrayOfSpecies = [];
 
-        console.log('ready');
-        console.dir(arrayOfSpecies);
-
     function createSpecies(species,quantity,eats,fishSprite){
-        console.dir(arrayOfSpecies);
-        console.log('createSpecies called: ' + arrayOfSpecies);
         var temparr = [];
         var x = 0;
         var y = 0;
         var cnt =0;
             for(let i =0; i<quantity;i++){
-                x = Math.random()*canvasWidth;
-                y= Math.random()*canvasHeight;
-                while(initial_collision(x,y,fishSprite.width,fishSprite.heigth,arrayOfSpecies)){
-                    // console.log("true");
-                    // console.log("x while :"+x);
-                    // console.log("y while :"+y);
-                    x = Math.random()*canvasWidth;
-                    y= Math.random()*canvasHeight;
+                x =createX();
+                y= createY();
+                while(initial_collision(x,y,fishSprite.width,fishSprite.heigth,arrayOfSpecies,temparr)){
+                    y= createY();
+                    x=createX();
                 }
-                //console.log("pushing");
                 temparr.push({
                     species:species,
                     x:x,
@@ -66,19 +68,31 @@
 
             }
 
-            //console.log('fishSprite width: ' + fishSprite.width + ', fishSprite height: ' + fishSprite.heigth);
-        //console.log(w[species]);
         arrayOfSpecies.push(temparr);
-        // console.log(arrayOfSpecies);
     }
 
-    function initial_collision(x,y,width,height,arraytocheck){
-        //console.log("initial collision");
-        //console.log(arraytocheck);
+
+    function createX(){
+        var x;
+        x = Math.random()*canvasWidth -80;
+        if(x <20){
+            x=100;
+        }
+        return x;
+    }
+
+    function createY() {
+        var y;
+        y = Math.random()*canvasHeight -80;
+        if(y <20){
+            y=100;
+        }
+        return y;
+    }
+    function initial_collision(x,y,width,height,arraytocheck,temparr){
+        //arrayOfSpeciescheck
         for(let k =0;k< arraytocheck.length;k++){
-            console.log("k"+k);
             for(let l=0;l<arraytocheck[k].length;l++){
-                console.log("l"+l);
                 var o1 = arraytocheck[k][l];
                 var no_collision = (
                     o1.x >= x + width ||
@@ -86,33 +100,31 @@
                     o1.y >= y + height ||
                     o1.y + o1.height < y
                 );
-                // var no_collision = (
-                //     o1.x >= o2.x + o2.width ||
-                //     o1.x + o1.width <= o2.x ||
-                //     o1.y >= o2.y + o2.height ||
-                //     o1.y + o1.height < o2.y
-                // );
-
                 if(no_collision == false){
-                    console.log("o1.x :"+o1.x);
-                    console.log("o1.y :"+o1.y);
-                    console.log("y :"+y);
-                    console.log("x :"+x);
-
-
-                    console.log("collision");
+                    console.log("spec true");
                     return true;
-                }
+                }//end of if
             }//end of l (2nd)
         }//end of k (first)
 
-        return false;
+        //temparrcheck
+        for(let i =0;i< temparr.length;i++){
+                var o2 = temparr[i];
+                var no_collision = (
+                    o2.x >= x + width ||
+                    o2.x + o2.width <= x ||
+                    o2.y >= y + height ||
+                    o2.y + o2.height < y
+                );
+                if(no_collision == false){
+                    return true;
+                }//end of if
+        }//end of i (first)
+        return false;//return wenn keine collision
     }//initial_collision end
 
     /*Execute*********************************************************************/
-    console.log('init: ' + arrayOfSpecies);
     for(let i = 0; i<listOfSpecies.length; i++){
-        console.log("i"+i);
         //console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
         createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
     }
@@ -141,27 +153,12 @@
         for(let i = arrayOfSpecies.length -1;i>=0;i--){
             //console.log(arrayOfSpecies);
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
-                 //console.log(arrayOfSpecies[i][j].species);
-
-                //console.log(arrayOfSpecies[i][j]);
-                //console.log('posx:'+arrayOfSpecies[i][j].posx+'posy:'+arrayOfSpecies[i][j].posy);
-                // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-                //console.log("image1"+image1 +"width"+arrayOfSpecies[i][j].width+" x: "+arrayOfSpecies[i][j].x+"posx"+arrayOfSpecies[i][j].posx);
-
                 ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height );
-                //console.log(arrayOfSpecies[i][j].posx+" "+arrayOfSpecies[i][j].posy+" "+arrayOfSpecies[i][j].width+" "+arrayOfSpecies[i][j].height+" "+arrayOfSpecies[i][j].x+" "+arrayOfSpecies[i][j].y);
-                // ctx.beginPath();
-                // ctx.rect(arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height);
-                // ctx.stroke();
-                //arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].heigth,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,20,20);
-                // ctx.fillText("x: "+arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+10);
-                // ctx.fillText("y: "+arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+20);
-                // ctx.fillText("i: "+i,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+30);
-                // ctx.fillText("j: "+j,arrayOfSpecies[i][j].x+5,arrayOfSpecies[i][j].y+40);
-                if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x - arrayOfSpecies[i][j].width + arrayOfSpecies[i][j].vx < 0)){
+
+                if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx < 0)){
                     arrayOfSpecies[i][j].vx = - arrayOfSpecies[i][j].vx;
                 }
-                if((arrayOfSpecies[i][j].y + arrayOfSpecies[i][j].vy +arrayOfSpecies[i][j].height > canvasHeight) || (arrayOfSpecies[i][j].y -arrayOfSpecies[i][j].height + arrayOfSpecies[i][j].vy < 0)){
+                if((arrayOfSpecies[i][j].y + arrayOfSpecies[i][j].vy +arrayOfSpecies[i][j].height > canvasHeight) || (arrayOfSpecies[i][j].y+ arrayOfSpecies[i][j].vy < 0)){
                     arrayOfSpecies[i][j].vy = - arrayOfSpecies[i][j].vy;
                 }
                arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
@@ -173,14 +170,7 @@
 
         for(let k =0;k< arrayOfSpecies.length;k++){
             for(let l=0;l<arrayOfSpecies[k].length;l++){
-                //check if finished
-                // for(var h=0; h<arrayOfSpecies.length;h++){
-                //      console.log(arrayOfSpecies);
-                //     if(arrayOfSpecies[h].length <1 || arrayOfSpecies==undefined){
-                //         cancelMe = cancelAnimationFrame(cancelMe);
-                //         return;
-                //     }
-                // }
+
                 checkCollision(arrayOfSpecies[k][l], k, l);
 
 
@@ -201,27 +191,6 @@ function checkCollision(o1, k, l) {
 
             o2 = arrayOfSpecies[hh][mm];
 
-        // console.log("k:"+k);
-        // console.log("l:"+l);
-        // console.log(arrayOfSpecies[k]);
-        // console.log(arrayOfSpecies[k][l]);
-        //
-        // console.log("i:"+i);
-        // console.log("j:"+j);
-        // console.log(arrayOfSpecies[i]);
-        // console.log(arrayOfSpecies[i][j]);
-        // // if(arrayOfSpecies[i][j]==undefined){
-        // //     j= j-1;
-        // // }
-        // console.log("j:"+j);
-        // console.log(arrayOfSpecies);
-        // //console.log(o1.x);
-
-        // if(o1.x+o1.width >= o2.x &&
-        //     o1.x<=o2.x+o2.width&&
-        //     o1.y>=o2.y&&
-        //     o1.y<=o2.y+o2.height){
-
         var no_collision = (
             o1.x > o2.x + o2.width ||
             o1.x + o1.width < o2.x ||
@@ -232,14 +201,10 @@ function checkCollision(o1, k, l) {
         if(no_collision == false){
                 ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
                 ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
-                // console.log(arrayOfSpecies[k]);
-                // console.log(arrayOfSpecies[k][l]);
-                //console.log(o2.height);
                  o1.vy= -o1.vy;
                  o1.vx= -o1.vx;
                 return;
-                //o1.vx= -o1.vx;
-                //o1.vy= -o1.vy;
+
 
                 // if(o2.species!=o1.species){
                 //     console.log("collision:"+o2.species +" "+o1.species);
