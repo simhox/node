@@ -38,7 +38,7 @@
     var image3 = new Image();
     image3.src ="treasures.png";
     var fishSprites=[{image:image1,posx:71,posy:31,width:62,heigth:61},{image:image1,posx:215,posy:39,width:76,heigth:51},{image:image1,posx:349,posy:42,width:84,heigth:56},{image:image1,posx:349,posy:42,width:84,heigth:56}];
-    var listOfSpecies =[{animal:"Fisch",amount:5,eats:["Algae"]},{animal:"Hai",amount:5,eats:["Fisch"]},{animal:"Algae",amount:5,eats:["Hai"]},{animal:"Seestern",amount:3,eats:["Hai"]}];
+    var listOfSpecies =[{animal:"Fisch",amount:5,eats:["Algae"]},{animal:"Hai",amount:5,eats:["Fisch"]},{animal:"Algae",amount:5,eats:["Hai"]}];
     var arrayOfSpecies = [];
 
     function createSpecies(species,quantity,eats,fishSprite){
@@ -101,7 +101,6 @@
                     o1.y + o1.height < y
                 );
                 if(no_collision == false){
-                    console.log("spec true");
                     return true;
                 }//end of if
             }//end of l (2nd)
@@ -199,91 +198,98 @@ function checkCollision(o1, k, l) {
         );
 
         if(no_collision == false){
-                ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
-                ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
+                // ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
+                // ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
                  o1.vy= -o1.vy;
                  o1.vx= -o1.vx;
+
+
+
+                if(o2.species!=o1.species){
+                    //console.log("collision:"+o2.species +" "+o1.species);
+                    //check if eats-> params: species1,species2
+                        for(let h =0;h<o2.eats.length;h++){
+
+                             if(o2.eats[h]==o1.species ){
+                                 //delete o1..(splice), create o2 at same coords
+                                 //find index of o1 to delete
+                                var target = o1;
+                                var targetKeys =Object.keys(target);
+                                var index = arrayOfSpecies[k].findIndex(function(entry){
+                                     var keys = Object.keys(entry);
+                                     return keys.length==targetKeys.length && keys.every(function(key){
+                                         return target.hasOwnProperty(key)&&entry[key] === target[key];
+                                     });
+                                 });
+                                 // console.log("index: "+index);
+                                if(index>-1){
+                                    console.log("o2eatso1");
+
+                                    //löschen wenn eats
+                                    arrayOfSpecies[k].splice(index,1);
+                            //        arrayOfSpecies[k].push({
+                            //             species:o2.species,
+                            //             x:o2.x,
+                            //             y:o2.y,
+                            //             vx:((Math.random()*7)-3.5),
+                            //             vy:((Math.random()*7)-3.5),
+                            //             width:o2.width,
+                            //             height:o2.height,
+                            //             posy:o2.posy,
+                            //             posx:o2.posx,
+                            //             eats:o2.eats
+                            //         });
+                            //         // console.log(arrayOfSpecies[k]);
+                                 }//end of splice
+                            //     //console.log(o2.x);
+                             }//end of if(eats)
+                        }//end of for h
+                        for(let m =0;m<o1.eats.length;m++){
+                             if(o1.eats[m]==o2.species ){
+                                 console.log("eats");
+                            //     //delete o2..(splice), create o1 at same coords
+                                var target = o2;
+                                 var targetKeys =Object.keys(target);
+                                 var index = arrayOfSpecies[k].findIndex(function(entry){//K?????????
+                                     var keys = Object.keys(entry);
+                                     return keys.length==targetKeys.length && keys.every(function(key){
+                                         return target.hasOwnProperty(key)&&entry[key] === target[key];
+                                     });
+                                 });
+                            //     // console.log("index:"+index);
+                                 if(index>-1){
+                                     console.log("index");
+                            //         // console.log("splice o2");
+                            //         // console.log(arrayOfSpecies[k]);
+                                     if(!arrayOfSpecies[k].length==hh){//was ist j jetzt?
+                                         arrayOfSpecies[k].splice(index,1);
+                                         console.log("o1eatso2");
+                                        //reproduce // pusht neue Species into Array
+                                            // arrayOfSpecies[k].push({
+                                            //     species:o1.species,
+                                            //     x:o1.x,
+                                            //     y:o1.y,
+                                            //     vx:((Math.random()*7)-3.5),
+                                            //     vy:((Math.random()*7)-3.5),
+                                            //     width:o1.width,
+                                            //     height:o1.height,
+                                            //     posy:o1.posy,
+                                            //     posx:o1.posx,
+                                            //     eats:o1.eats
+                                            // });
+                                     }
+                            //         // console.log(arrayOfSpecies[k]);
+                                 }//end of splice
+                             }//end of if eats
+                        }//end of for
+                    }//end of if Species=species
+
                 return;
-
-
-                // if(o2.species!=o1.species){
-                //     console.log("collision:"+o2.species +" "+o1.species);
-                //     //check if eats-> params: species1,species2
-                //         for(let h =0;h<o2.eats.length;h++){
-                //
-                //             if(o2.eats[h]==o1.species ){
-                //                 //delete o1..(splice), create o2 at same coords
-                //                 //var index = arrayOfSpecies[k].indexOf(o1);
-                //                 var target = o1;
-                //                 var targetKeys =Object.keys(target);
-                //                 var index = arrayOfSpecies[k].findIndex(function(entry){
-                //                     var keys = Object.keys(entry);
-                //                     return keys.length==targetKeys.length && keys.every(function(key){
-                //                         return target.hasOwnProperty(key)&&entry[key] === target[key];
-                //                     });
-                //                 });
-                //                 // console.log("index: "+index);
-                //                 if(index>-1){
-                //                     // console.log(arrayOfSpecies[k]);
-                //                     arrayOfSpecies[k].splice(index,1);
-                //                     arrayOfSpecies[k].push({
-                //                         species:o2.species,
-                //                         x:o2.x,
-                //                         y:o2.y,
-                //                         vx:((Math.random()*7)-3.5),
-                //                         vy:((Math.random()*7)-3.5),
-                //                         width:o2.width,
-                //                         height:o2.height,
-                //                         posy:o2.posy,
-                //                         posx:o2.posx,
-                //                         eats:o2.eats
-                //                     });
-                //                     // console.log(arrayOfSpecies[k]);
-                //                 }//end of splice
-                //                 //console.log(o2.x);
-                //             }//end of if(eats)
-                //         }//end of for h
-                //         for(let m =0;m<o1.eats.length;m++){
-                //             if(o1.eats[m]==o2.species ){
-                //                 //delete o2..(splice), create o1 at same coords
-                //                 var target = o2;
-                //                 var targetKeys =Object.keys(target);
-                //                 var index = arrayOfSpecies[k].findIndex(function(entry){
-                //                     var keys = Object.keys(entry);
-                //                     return keys.length==targetKeys.length && keys.every(function(key){
-                //                         return target.hasOwnProperty(key)&&entry[key] === target[key];
-                //                     });
-                //                 });
-                //                 // console.log("index:"+index);
-                //                 if(index>-1){
-                //                     // console.log("splice o2");
-                //                     // console.log(arrayOfSpecies[k]);
-                //                     if(!arrayOfSpecies[k].length==j){
-                //                         arrayOfSpecies[k].splice(index,1);
-                //                         arrayOfSpecies[k].push({
-                //                             species:o1.species,
-                //                             x:o1.x,
-                //                             y:o1.y,
-                //                             vx:((Math.random()*7)-3.5),
-                //                             vy:((Math.random()*7)-3.5),
-                //                             width:o1.width,
-                //                             height:o1.height,
-                //                             posy:o1.posy,
-                //                             posx:o1.posx,
-                //                             eats:o1.eats
-                //                         });
-                //                     }
-                //                     // console.log(arrayOfSpecies[k]);
-                //                 }//end of splice
-                //             }//end of if eats
-                //         }//end of for
-                //     }//end of if Species=species
-                //
                 }//end of if
 
-        }
-    }
-}
+        }//end of mm loop
+    }//end of hh loop
+}//end of checkCollision
 
     $(document).on("click","#start",function(){
         //console.log("start clicked");
