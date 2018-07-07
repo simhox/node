@@ -13,7 +13,7 @@
 *TODO:
 *Auswahl Anzahl Spezies (Auswahl anzahl fische?)
 *Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
-*Fressen und Duplikation
+*Fressen und Duplikation DONE
 *Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%)
 *Hintergrundfarbe Fische
 * zusätzliche Sprites (10)
@@ -200,13 +200,13 @@ function checkCollision(o1, k, l) {
         if(no_collision == false){
                 // ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
                 // ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
-                 o1.vy= -o1.vy;
+                 // o1.vy= -o1.vy;
                  o1.vx= -o1.vx;
 
 
 
                 if(o2.species!=o1.species){
-                    //console.log("collision:"+o2.species +" "+o1.species);
+                    // console.log("collision:"+o2.species +" "+o1.species);
                     //check if eats-> params: species1,species2
                         for(let h =0;h<o2.eats.length;h++){
 
@@ -223,65 +223,34 @@ function checkCollision(o1, k, l) {
                                  });
                                  // console.log("index: "+index);
                                 if(index>-1){
-                                    console.log("o2eatso1");
+                                    //console.log("o2eatso1");
 
                                     //löschen wenn eats
                                     arrayOfSpecies[k].splice(index,1);
-                            //        arrayOfSpecies[k].push({
-                            //             species:o2.species,
-                            //             x:o2.x,
-                            //             y:o2.y,
-                            //             vx:((Math.random()*7)-3.5),
-                            //             vy:((Math.random()*7)-3.5),
-                            //             width:o2.width,
-                            //             height:o2.height,
-                            //             posy:o2.posy,
-                            //             posx:o2.posx,
-                            //             eats:o2.eats
-                            //         });
+                                    var x = createX();
+                                    var y = createY();
+                                    while(initial_collision2(x,y,o2.width,o2.height,arrayOfSpecies)){
+                                        x =createX();
+                                        y =createY();
+                                    }
+
+                                   arrayOfSpecies[k].push({
+                                        species:o2.species,
+                                        x:x,
+                                        y:y,
+                                        vx:o2.vx,
+                                        vy:o2.vy,
+                                        width:o2.width,
+                                        height:o2.height,
+                                        posy:o2.posy,
+                                        posx:o2.posx,
+                                        eats:o2.eats
+                                    });
                             //         // console.log(arrayOfSpecies[k]);
                                  }//end of splice
                             //     //console.log(o2.x);
                              }//end of if(eats)
                         }//end of for h
-                        for(let m =0;m<o1.eats.length;m++){
-                             if(o1.eats[m]==o2.species ){
-                                 console.log("eats");
-                            //     //delete o2..(splice), create o1 at same coords
-                                var target = o2;
-                                 var targetKeys =Object.keys(target);
-                                 var index = arrayOfSpecies[k].findIndex(function(entry){//K?????????
-                                     var keys = Object.keys(entry);
-                                     return keys.length==targetKeys.length && keys.every(function(key){
-                                         return target.hasOwnProperty(key)&&entry[key] === target[key];
-                                     });
-                                 });
-                            //     // console.log("index:"+index);
-                                 if(index>-1){
-                                     console.log("index");
-                            //         // console.log("splice o2");
-                            //         // console.log(arrayOfSpecies[k]);
-                                     if(!arrayOfSpecies[k].length==hh){//was ist j jetzt?
-                                         arrayOfSpecies[k].splice(index,1);
-                                         console.log("o1eatso2");
-                                        //reproduce // pusht neue Species into Array
-                                            // arrayOfSpecies[k].push({
-                                            //     species:o1.species,
-                                            //     x:o1.x,
-                                            //     y:o1.y,
-                                            //     vx:((Math.random()*7)-3.5),
-                                            //     vy:((Math.random()*7)-3.5),
-                                            //     width:o1.width,
-                                            //     height:o1.height,
-                                            //     posy:o1.posy,
-                                            //     posx:o1.posx,
-                                            //     eats:o1.eats
-                                            // });
-                                     }
-                            //         // console.log(arrayOfSpecies[k]);
-                                 }//end of splice
-                             }//end of if eats
-                        }//end of for
                     }//end of if Species=species
 
                 return;
@@ -290,6 +259,30 @@ function checkCollision(o1, k, l) {
         }//end of mm loop
     }//end of hh loop
 }//end of checkCollision
+
+function initial_collision2(x,y,width,height,arraytocheck){
+
+    for(let i=0; i<arraytocheck.length;i++){
+        console.log(i);
+        for(let j=0;j<arraytocheck[i].length;j++){
+
+            var o1 = arrayOfSpecies[i][j];
+            var no_collision = (
+                o1.x > x+width ||
+                o1.x + o1.width < x ||
+                o1.y > y + height ||
+                o1.y + o1.height < y
+            );
+            if(no_collision == false){
+                return true;
+            }
+
+        }
+    }
+    return false;
+
+
+}
 
     $(document).on("click","#start",function(){
         //console.log("start clicked");
