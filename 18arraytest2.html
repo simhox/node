@@ -5,42 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>arraytest2</title>
+    <script src="jquery-3.3.1.min.js"></script>
+
 </head>
 <body>
 
 <script>
-var theArray=[];
+$( document ).ready( function() {
+  console.log( 'DOM READY!' );
 
-function insertValues(species,quantity){
-         var temp = [];
-        for(let i =0; i<quantity;i++){
-            temp.push({
-                species:species,
-                randomValue:Math.random()*10
-                })
-                // console.log(theArray);
-        }
-
-    theArray.push(temp);
-}
-
-var listOfSpecies =[{animal:"Fish",amount:5},{animal:"Shark",amount:5},{animal:"Algae",amount:5}];
-
-for(let i = 0; i<listOfSpecies.length; i++){
-    // console.log(i);
-    // console.log(theArray);
-    insertValues(listOfSpecies[i].animal,listOfSpecies[i].amount);
-}
-
-var arrA = ["a","b"];
-var arrB = ["c","d"];
-var arrC =[];
-var newArray = Object.assign([],arrB);
-console.log(newArray);
-var newArray = Object.assign(newArray,arrA);
-console.log(newArray);
+  var c = $( '<canvas>', { width:$(window).width(), height:$(window).height(),id:"canvas" } )
+    .prependTo( 'body' );
+    var canvas = document.getElementById('canvas');
+    var canvasWidth = canvas.width;
+    var canvasHeight = canvas.height;
+  var ctx = c.get(0).getContext('2d');
+  ctx.fillRect(100,100,100,100);
+});
 
 </script>
-
+<style>
+#canvas{
+    border:1px solid black;
+}
+</style>
 </body>
 </html>
