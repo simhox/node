@@ -11,15 +11,16 @@
 <script>
 /*
 *TODO:
-*Auswahl Anzahl Spezies (Auswahl anzahl fische?)
+*Auswahl Anzahl Spezies (Auswahl anzahl fische?) DONE
 *Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
 *Fressen und Duplikation DONE
-*Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%)
+*Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%) DONE
 *Hintergrundfarbe Fische DONE
-* zusätzliche Sprites (10)
-* wenn möglich Hintergrundsprites
+* zusätzliche Sprites (10) DONE
+* wenn möglich Hintergrundsprites DONE
 *Canvas Responsive (Frage anzahl Max Fische)//geht nicht
-*
+* Design oberhaul ( erklärung, single page application)
+* eats mechanism
 */
 
 
@@ -29,13 +30,10 @@
         // $('#canvas').outerWidth($(window).width());
          // var c = $( '<canvas>', { width:$(window).width()-100, height:$(window).height()-100,id:"canvas" } )
          //  .prependTo( 'body' );
-
+        var nmbOfSpecies =$('input[name=nmbOfSpecies]:checked').val();
         var canvas = document.getElementById('canvas');
-         var canvasWidth = canvas.width;
-         var canvasHeight = canvas.height;
-
-         // var canvasHeight=1000;
-         // var canvasWidth= 1800;
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
         var canvas = document.getElementsByTagName('canvas')[0];
         var ctx = canvas.getContext('2d');
     /*Daten*********************************************************************/
@@ -60,20 +58,28 @@
 
     ];
 
-    var listOfSpecies =[{
-        animal:"BlackWhite",amount:5,eats:["RedBlack"]},
-        {animal:"RedBlack",amount:5,eats:["Red"]},
-        {animal:"Red",amount:5,eats:["BlueLong"]},
-        {animal:"BlueLong",amount:5,eats:["Yellow"]},
-        {animal:"Yellow",amount:5,eats:["Shrimp"]},
-        {animal:"Shrimp",amount:5,eats:["Crab"]},
-        {animal:"Crab",amount:5,eats:["BlueSquare"]},
-        {animal:"BlueSquare",amount:5,eats:["Nemo"]},
-        {animal:"Nemo",amount:5,eats:["Seepferd"]},
-        {animal:"Seepferd",amount:5,eats:["BlackWhite"]}
+    var listOfSpecies =[
+        {animal:"BlackWhite",amount:3,eats:["RedBlack"]},
+        {animal:"RedBlack",amount:3,eats:["Red"]},
+        {animal:"Red",amount:3,eats:["BlueLong"]},
+        {animal:"BlueLong",amount:3,eats:["Yellow"]},
+        {animal:"Yellow",amount:3,eats:["Shrimp"]},
+        {animal:"Shrimp",amount:3,eats:["Crab"]},
+        {animal:"Crab",amount:3,eats:["BlueSquare"]},
+        {animal:"BlueSquare",amount:3,eats:["Nemo"]},
+        {animal:"Nemo",amount:3,eats:["Seepferd"]},
+        {animal:"Seepferd",amount:3,eats:["BlackWhite"]}
 
     ];
     var arrayOfSpecies = [];
+
+    $(document).on("click","#start",function(){
+        nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
+        for(let i = 0; i<nmbOfSpecies; i++){
+            createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
+        }
+        requestAnimationFrame(loop);
+    });
 
     function createSpecies(species,quantity,eats,fishSprite){
         var temparr = [];
@@ -91,8 +97,8 @@
                     species:species,
                     x:x,
                     y:y,
-                    vx:((Math.random()*2)),
-                    vy:((Math.random()*2)),
+                    vx:((Math.random()*10)),
+                    vy:((Math.random()*10)),
                     height:fishSprite.heigth,
                     width:fishSprite.width,
                     posy:fishSprite.posy,
@@ -157,10 +163,6 @@
     }//initial_collision end
 
     /*Execute*********************************************************************/
-    for(let i = 0; i<listOfSpecies.length; i++){
-        //console.log(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
-        createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
-    }
     /*Draw*********************************************************************/
     var cancelMe = "";
     var highscore =0;
@@ -183,7 +185,7 @@
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
-        ctx.drawImage(image2,seaweedSprites[0].posx,seaweedSprites[0].posy,seaweedSprites[0].width,seaweedSprites[0].height,500,500,seaweedSprites[0].width,seaweedSprites[0].height);
+        // ctx.drawImage(image2,seaweedSprites[0].posx,seaweedSprites[0].posy,seaweedSprites[0].width,seaweedSprites[0].height,500,500,seaweedSprites[0].width,seaweedSprites[0].height);
         for(let i = arrayOfSpecies.length -1;i>=0;i--){
             //console.log(arrayOfSpecies);
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
@@ -201,6 +203,29 @@
 
             }//end of inner for loop
         }//end of outer for loop
+        //check if end
+            //nmb of species = 100%
+            //nmb of alive species
+        var aliveSpecies=[];
+        for(let h=0; h<arrayOfSpecies.length;h++){
+            for(let g=0; g<arrayOfSpecies[h].length;g++){
+                if(!aliveSpecies.includes(arrayOfSpecies[h][g].species)){
+                    aliveSpecies.push(arrayOfSpecies[h][g].species);
+                }//end of if includes
+            }//end of k
+
+        }//end of h loop
+        var nmbOfAliveSpecies = aliveSpecies.length;
+        var percentage = nmbOfAliveSpecies/nmbOfSpecies;
+        console.log(percentage);
+        console.log(aliveSpecies);
+        var nmbOfDeadSpecies = nmbOfSpecies-nmbOfAliveSpecies;
+        $('#deadSpecies').html('Ausgestorbene Arten: '+nmbOfDeadSpecies);
+        if(percentage <1){
+            // console.log("game over");
+             cancelMe = cancelAnimationFrame(cancelMe);
+             return;
+        }
 
         for(let k =0;k< arrayOfSpecies.length;k++){
             for(let l=0;l<arrayOfSpecies[k].length;l++){
@@ -213,6 +238,8 @@
 
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
+
+
 
 function checkCollision(o1, k, l) {
     var o2;
@@ -235,7 +262,7 @@ function checkCollision(o1, k, l) {
         if(no_collision == false){
                 // ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
                 // ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
-                 // o1.vy= -o1.vy;
+                  o1.vy= -o1.vy;
                  o1.vx= -o1.vx;
 
 
@@ -300,7 +327,6 @@ function checkCollision(o1, k, l) {
 function initial_collision2(x,y,width,height,arraytocheck){
 
     for(let i=0; i<arraytocheck.length;i++){
-        console.log(i);
         for(let j=0;j<arraytocheck[i].length;j++){
 
             var o1 = arrayOfSpecies[i][j];
@@ -320,11 +346,6 @@ function initial_collision2(x,y,width,height,arraytocheck){
 
 
 }
-
-    $(document).on("click","#start",function(){
-        //console.log("start clicked");
-        requestAnimationFrame(loop);
-    });
 });//end of document.ready function
 </script>
 <style >
@@ -337,9 +358,25 @@ function initial_collision2(x,y,width,height,arraytocheck){
     }
 </style>
 <body>
-
+    <label for="3">3</label>
+    <input type="radio" name="nmbOfSpecies" value="3" checked>
+    <label for="4">4</label>
+    <input type="radio" name="nmbOfSpecies" value="4">
+    <label for="5">5</label>
+    <input type="radio" name="nmbOfSpecies" value="5">
+    <label for="6">6</label>
+    <input type="radio" name="nmbOfSpecies" value="6"><br>
+    <label for="7">7</label>
+    <input type="radio" name="nmbOfSpecies" value="7">
+        <label for="8">8</label>
+    <input type="radio" name="nmbOfSpecies" value="8">
+        <label for="9">9</label>
+    <input type="radio" name="nmbOfSpecies" value="9">
+        <label for="10">10</label>
+    <input type="radio" name="nmbOfSpecies" value="10"><br>
     <button type="button" name="button" id="start">Start</button><br>
     <div id="highscore"class="highscore">Score:</div>
+    <div id="deadSpecies" class="highscore">Ausgestorbene Arten:</div>
     <canvas id="canvas" width="1400" height="800">
 </body>
 </html>
