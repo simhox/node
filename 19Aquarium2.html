@@ -71,6 +71,17 @@
         {animal:"Seepferd",amount:3,eats:["BlackWhite"]}
 
     ];
+
+    var creatEats(listOfSpecies){
+        nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
+        var nmbOfEats = Math.floor(nmbOfSpecies/3);
+        var animalArr = [];
+        for(let i = 0; i<listOfSpecies.length;i++){
+            animalArr.push(listOfSpecies[i].animal);
+
+        }
+
+    }
     var arrayOfSpecies = [];
 
     $(document).on("click","#start",function(){
