@@ -12,15 +12,16 @@
 
 <script>
 $( document ).ready( function() {
-  console.log( 'DOM READY!' );
+    var arr = ["0","a","2","a","b"];
+    var i = 2;
+    // arr.slice(0,1);
+    //console.log(arr);
+    console.log(arr);
+    console.log(arr.splice(0,i));
 
-  var c = $( '<canvas>', { width:$(window).width(), height:$(window).height(),id:"canvas" } )
-    .prependTo( 'body' );
-    var canvas = document.getElementById('canvas');
-    var canvasWidth = canvas.width;
-    var canvasHeight = canvas.height;
-  var ctx = c.get(0).getContext('2d');
-  ctx.fillRect(100,100,100,100);
+    var test = Math.floor(10/3);
+    console.log(test);
+
 });
 
 </script>

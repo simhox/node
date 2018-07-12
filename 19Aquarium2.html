@@ -72,22 +72,55 @@
 
     ];
 
-    var creatEats(listOfSpecies){
+    function createEats(listOfSpecies){
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var nmbOfEats = Math.floor(nmbOfSpecies/3);
         var animalArr = [];
-        for(let i = 0; i<listOfSpecies.length;i++){
+        for(let i = 0; i<nmbOfSpecies;i++){
             animalArr.push(listOfSpecies[i].animal);
+        }
+        // for nmb of eats add a eats
+        var shortListOfSpecies= [];
+        shortListOfSpecies = listOfSpecies.splice(0,nmbOfSpecies);
+
+        //find last of array animals to create full loop
+        //take random element from animalarr and add to eats, if not listOfSpecies.species == animal, do x times, until every eats has x members
+
+        for(let j=0; j<nmbOfEats;j++){
+            var animalTemp= animalArr;
+            for(let k=0; k<shortListOfSpecies.length;k++){
+                var animal = eats_randomize_helper(animalTemp,nmbOfSpecies);
+                if(shortListOfSpecies[k].species!=animal)
+                    shortListOfSpecies[k].eats.push(animal);
+                console.log(animalTemp);
+                //animaltemp remove animal
+                // var index = findWithAttr(animalTemp,species,animal);
+                // console.log(index);
+            }
 
         }
+        return shortListOfSpecies;
 
+    }
+    function findWithAttr(array, attr, value) {
+        for(var i = 0; i < array.length; i += 1) {
+            if(array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    function eats_randomize_helper(animalArr,nmbOfSpecies){
+        var i = Math.random()*nmbOfSpecies;
+        return animalArr[i];
     }
     var arrayOfSpecies = [];
 
     $(document).on("click","#start",function(){
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
+        var tempListOfSpecies = createEats(listOfSpecies);
         for(let i = 0; i<nmbOfSpecies; i++){
-            createSpecies(listOfSpecies[i].animal,listOfSpecies[i].amount,listOfSpecies[i].eats,fishSprites[i]);
+            createSpecies(tempListOfSpecies[i].animal,tempListOfSpecies[i].amount,tempListOfSpecies[i].eats,fishSprites[i]);
         }
         requestAnimationFrame(loop);
     });
