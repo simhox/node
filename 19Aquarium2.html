@@ -6,32 +6,41 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Aquarium</title>
     <script src="jquery-3.3.1.min.js"></script>
+
     <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <script>
 /*
 *TODO:
 *Auswahl Anzahl Spezies (Auswahl anzahl fische?) DONE
-*Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
 *Fressen und Duplikation DONE
 *Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%) DONE
 *Hintergrundfarbe Fische DONE
 * zusätzliche Sprites (10) DONE
 * wenn möglich Hintergrundsprites DONE
 *Canvas Responsive (Frage anzahl Max Fische)//geht nicht
-* Design oberhaul ( erklärung, single page application)
 * eats mechanism DONE
+* restart DONE
+* increase/decrease speed
+* framework?-> Bootstrap Done
+* Design oberhaul ( erklärung, single page application)
 * grösse des Lebensraums //same per species?
-* restart
+* Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
+* Name required DONE
+* Eats bug bei wenigen fixen
+* Titel
+* Percentage Ausgabe
+* window resize change canvas width heigth (anpassen)
 */
-
+/*greensock für animationen */
 
     /*vars **********************************************************************/
     $(document).ready(function(){
-        // $('#canvas').outerHeight($(window).height());
-        // $('#canvas').outerWidth($(window).width());
-         // var c = $( '<canvas>', { width:$(window).width()-100, height:$(window).height()-100,id:"canvas" } )
-         //  .prependTo( 'body' );
+         // $('#canvas').height($(window).innerHeight() - 100);
+         $('#canvas').width($(window).innerWidth() - 10);
+          // var c = $( '<canvas>', { width:$(window).width()-100, height:$(window).height()-100,id:"canvas" } )
+          // .prependTo( 'body' );
         var nmbOfSpecies =$('input[name=nmbOfSpecies]:checked').val();
         var canvas = document.getElementById('canvas');
         var canvasWidth = canvas.width;
@@ -39,7 +48,14 @@
         var canvas = document.getElementsByTagName('canvas')[0];
         var ctx = canvas.getContext('2d');
         var arrayOfSpecies = [];
-        var originalArrayOfSpecies =[]
+        var originalArrayOfSpecies =[];
+        var name ="";
+    /**initial hidden*********************************************************************/
+    $("#canvas").hide();
+    $("#deadSpecies").hide();
+    $("#highscore").hide();
+    $("#nameAusgabe").hide();
+
     /*Daten*********************************************************************/
     var image1 = new Image();
     image1.src ="fish.png";
@@ -86,13 +102,11 @@
             animalArr.push(listOfSpecies[i].animal);
         }
         // for nmb of eats add a eats
-        console.log("before LoS");
-        console.log(listOfSpecies);
+
         var shortListOfSpecies= listOfSpecies.slice();
 
         shortListOfSpecies = shortListOfSpecies.splice(0,nmbOfSpecies);
-        console.log("after LoS");
-        console.log(listOfSpecies);
+
         //find last of array animals to create full loop
         //take random element from animalarr and add to eats, if not listOfSpecies.species == animal, do x times, until every eats has x members
 
@@ -122,14 +136,28 @@
     }
 
     $(document).on("click","#start",function(){
+        name = $("#name").val();
+        if(name==""||name==undefined){
+            return;
+        }
         // restart
             ctx.clearRect(0,0,canvas.width,canvas.height);
             arrayOfSpecies =[];
             nmbOfDeadSpecies=0;
             nmbOfSpecies =0;
-            console.log("listOfSpecies");
-            console.log(listOfSpecies);
+            highscore=0;
         //end of restart
+        $("#canvas").show();
+        $("#deadSpecies").show();
+        $("#highscore").show();
+        $("#nameAusgabe").show();
+        $("#start").hide();
+        $("#anzahlEingabe").hide();
+        $("#name").hide();
+        var name = $('#name').val();
+        console.log(name);
+        $('#nameAusgabe').html(name);
+
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var tempListOfSpecies = createEats(listOfSpecies);
         //console.log(tempListOfSpecies);
@@ -283,6 +311,12 @@
         $('#deadSpecies').html('Ausgestorbene Arten: '+nmbOfDeadSpecies);
         if(percentage <0.6){
             // console.log("game over");
+            $("#canvas").hide();
+            $("#start").show();
+            $("#anzahlEingabe").show();
+            $("#name").show();
+            $("#nameAusgabe").hide();
+
              cancelMe = cancelAnimationFrame(cancelMe);
              return;
         }
@@ -416,27 +450,70 @@ function initial_collision2(x,y,width,height,arraytocheck){
         font-size: 1.5em;
         font-family: Press Start 2P;
     }
+    .blackborder{
+        border:1px solid black;
+    }
 </style>
 <body>
-    <label for="3">3</label>
-    <input type="radio" name="nmbOfSpecies" value="3" checked>
-    <label for="4">4</label>
-    <input type="radio" name="nmbOfSpecies" value="4">
-    <label for="5">5</label>
-    <input type="radio" name="nmbOfSpecies" value="5">
-    <label for="6">6</label>
-    <input type="radio" name="nmbOfSpecies" value="6"><br>
-    <label for="7">7</label>
-    <input type="radio" name="nmbOfSpecies" value="7">
-        <label for="8">8</label>
-    <input type="radio" name="nmbOfSpecies" value="8">
-        <label for="9">9</label>
-    <input type="radio" name="nmbOfSpecies" value="9">
-        <label for="10">10</label>
-    <input type="radio" name="nmbOfSpecies" value="10"><br>
-    <button type="button" name="button" id="start">Start</button><br>
-    <div id="highscore"class="highscore">Score:</div>
-    <div id="deadSpecies" class="highscore">Ausgestorbene Arten:</div>
-    <canvas id="canvas" width="1400" height="800">
+    <div class="container-fluid">
+        <div class="row">
+        </div>
+    </div>
+    <div class="container-fluid ">
+        <div class="row ">
+            <div class="col-sm-4">
+            </div>
+                <div class="col-sm-4  ">
+                    <div id="anzahlEingabe">
+                        Anzahl Arten:<br>
+                        <label for="3">3</label>
+                        <input type="radio" name="nmbOfSpecies" value="3" checked>
+                        <label for="4">4</label>
+                        <input type="radio" name="nmbOfSpecies" value="4">
+                        <label for="5">5</label>
+                        <input type="radio" name="nmbOfSpecies" value="5">
+                        <label for="6">6</label>
+                        <input type="radio" name="nmbOfSpecies" value="6"><br>
+                        <label for="7">7</label>
+                        <input type="radio" name="nmbOfSpecies" value="7">
+                        <label for="8">8</label>
+                        <input type="radio" name="nmbOfSpecies" value="8">
+                        <label for="9">9</label>
+                        <input type="radio" name="nmbOfSpecies" value="9">
+                        <label for="10">10</label>
+                        <input type="radio" name="nmbOfSpecies" value="10"><br>
+                    </div>
+                </div>
+                <div class="col-sm-4 ">
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4 ">
+            </div>
+            <div class="col-sm-4 ">
+                <button type="button" name="button" id="start" >Start</button>
+                Spieler:<input type="text" id="name">
+                <div id="nameAusgabe" >Name</div>
+                <div id="highscore"class="highscore">Score:</div><br>
+            </div>
+            <div class="col-sm-4 ">
+                <div id="deadSpecies" class="highscore">Ausgestorbene Arten:</div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4 ">
+                <canvas id="canvas" width="1400" height="800">
+            </div>
+            <div class="col-sm-4 ">
+            </div>
+            <div class="col-sm-4 ">
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
