@@ -92,24 +92,18 @@
                 var animal = eats_randomize_helper(animalTemp,nmbOfSpecies);
                 if(shortListOfSpecies[k].species!=animal)
                     shortListOfSpecies[k].eats.push(animal);
-                console.log(animalTemp);
-                //animaltemp remove animal
-                // var index = findWithAttr(animalTemp,species,animal);
-                // console.log(index);
+                //remove animal from animalTemp
+                var index = animalTemp.indexOf(animal);
+                if (index > -1) {
+                  animalTemp.splice(index, 1);
+                }
+
             }
 
         }
         return shortListOfSpecies;
+    }
 
-    }
-    function findWithAttr(array, attr, value) {
-        for(var i = 0; i < array.length; i += 1) {
-            if(array[i][attr] === value) {
-                return i;
-            }
-        }
-        return -1;
-    }
     function eats_randomize_helper(animalArr,nmbOfSpecies){
         var i = Math.random()*nmbOfSpecies;
         return animalArr[i];
@@ -119,6 +113,7 @@
     $(document).on("click","#start",function(){
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var tempListOfSpecies = createEats(listOfSpecies);
+        console.log(tempListOfSpecies);
         for(let i = 0; i<nmbOfSpecies; i++){
             createSpecies(tempListOfSpecies[i].animal,tempListOfSpecies[i].amount,tempListOfSpecies[i].eats,fishSprites[i]);
         }
