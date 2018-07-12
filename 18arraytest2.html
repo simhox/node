@@ -13,14 +13,12 @@
 <script>
 $( document ).ready( function() {
     var arr = ["0","a","2","a","b"];
-    var i = 2;
-    // arr.slice(0,1);
-    //console.log(arr);
+    var arr2 = arr.slice();
+    arr2.splice(0,3);
     console.log(arr);
-    console.log(arr.splice(0,i));
+    console.log(arr2);
 
-    var test = Math.floor(10/3);
-    console.log(test);
+
 
 });
 

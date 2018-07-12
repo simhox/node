@@ -20,7 +20,9 @@
 * wenn möglich Hintergrundsprites DONE
 *Canvas Responsive (Frage anzahl Max Fische)//geht nicht
 * Design oberhaul ( erklärung, single page application)
-* eats mechanism
+* eats mechanism DONE
+* grösse des Lebensraums //same per species?
+* restart
 */
 
 
@@ -36,6 +38,8 @@
         var canvasHeight = canvas.height;
         var canvas = document.getElementsByTagName('canvas')[0];
         var ctx = canvas.getContext('2d');
+        var arrayOfSpecies = [];
+        var originalArrayOfSpecies =[]
     /*Daten*********************************************************************/
     var image1 = new Image();
     image1.src ="fish.png";
@@ -76,13 +80,19 @@
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var nmbOfEats = Math.floor(nmbOfSpecies/3);
         var animalArr = [];
+
         for(let i = 0; i<nmbOfSpecies;i++){
+
             animalArr.push(listOfSpecies[i].animal);
         }
         // for nmb of eats add a eats
-        var shortListOfSpecies= [];
-        shortListOfSpecies = listOfSpecies.splice(0,nmbOfSpecies);
+        console.log("before LoS");
+        console.log(listOfSpecies);
+        var shortListOfSpecies= listOfSpecies.slice();
 
+        shortListOfSpecies = shortListOfSpecies.splice(0,nmbOfSpecies);
+        console.log("after LoS");
+        console.log(listOfSpecies);
         //find last of array animals to create full loop
         //take random element from animalarr and add to eats, if not listOfSpecies.species == animal, do x times, until every eats has x members
 
@@ -90,8 +100,9 @@
             var animalTemp= animalArr;
             for(let k=0; k<shortListOfSpecies.length;k++){
                 var animal = eats_randomize_helper(animalTemp,nmbOfSpecies);
-                if(shortListOfSpecies[k].species!=animal)
+                if(shortListOfSpecies[k].animal!=animal){
                     shortListOfSpecies[k].eats.push(animal);
+                }
                 //remove animal from animalTemp
                 var index = animalTemp.indexOf(animal);
                 if (index > -1) {
@@ -101,19 +112,27 @@
             }
 
         }
+        // console.log(shortListOfSpecies);
         return shortListOfSpecies;
     }
 
     function eats_randomize_helper(animalArr,nmbOfSpecies){
-        var i = Math.random()*nmbOfSpecies;
+        var i = Math.floor(Math.random()*animalArr.length);
         return animalArr[i];
     }
-    var arrayOfSpecies = [];
 
     $(document).on("click","#start",function(){
+        // restart
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            arrayOfSpecies =[];
+            nmbOfDeadSpecies=0;
+            nmbOfSpecies =0;
+            console.log("listOfSpecies");
+            console.log(listOfSpecies);
+        //end of restart
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var tempListOfSpecies = createEats(listOfSpecies);
-        console.log(tempListOfSpecies);
+        //console.log(tempListOfSpecies);
         for(let i = 0; i<nmbOfSpecies; i++){
             createSpecies(tempListOfSpecies[i].animal,tempListOfSpecies[i].amount,tempListOfSpecies[i].eats,fishSprites[i]);
         }
@@ -148,6 +167,7 @@
             }
 
         arrayOfSpecies.push(temparr);
+
     }
 
 
@@ -254,18 +274,19 @@
             }//end of k
 
         }//end of h loop
+        //--------ENDING---------------------------------------------------------------------------
         var nmbOfAliveSpecies = aliveSpecies.length;
         var percentage = nmbOfAliveSpecies/nmbOfSpecies;
-        console.log(percentage);
-        console.log(aliveSpecies);
+        // console.log(percentage);
+        // console.log(aliveSpecies);
         var nmbOfDeadSpecies = nmbOfSpecies-nmbOfAliveSpecies;
         $('#deadSpecies').html('Ausgestorbene Arten: '+nmbOfDeadSpecies);
-        if(percentage <1){
+        if(percentage <0.6){
             // console.log("game over");
              cancelMe = cancelAnimationFrame(cancelMe);
              return;
         }
-
+        //---------------------------------------------------------------------------------------
         for(let k =0;k< arrayOfSpecies.length;k++){
             for(let l=0;l<arrayOfSpecies[k].length;l++){
 
