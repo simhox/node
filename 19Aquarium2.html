@@ -37,8 +37,8 @@
 
     /*vars **********************************************************************/
     $(document).ready(function(){
-         // $('#canvas').height($(window).innerHeight() - 100);
-         $('#canvas').width($(window).innerWidth() - 10);
+         $('#canvas').height($(window).innerHeight() - 200);
+         $('#canvas').width($(window).innerWidth() - 100);
           // var c = $( '<canvas>', { width:$(window).width()-100, height:$(window).height()-100,id:"canvas" } )
           // .prependTo( 'body' );
         var nmbOfSpecies =$('input[name=nmbOfSpecies]:checked').val();
@@ -50,6 +50,7 @@
         var arrayOfSpecies = [];
         var originalArrayOfSpecies =[];
         var name ="";
+        var id= 0;
     /**initial hidden*********************************************************************/
     $("#canvas").hide();
     $("#deadSpecies").hide();
@@ -140,6 +141,7 @@
         if(name==""||name==undefined){
             return;
         }
+        id++;
         // restart
             ctx.clearRect(0,0,canvas.width,canvas.height);
             arrayOfSpecies =[];
@@ -154,7 +156,7 @@
         $("#start").hide();
         $("#anzahlEingabe").hide();
         $("#name").hide();
-        var name = $('#name').val();
+
         console.log(name);
         $('#nameAusgabe').html(name);
 
@@ -316,7 +318,7 @@
             $("#anzahlEingabe").show();
             $("#name").show();
             $("#nameAusgabe").hide();
-
+            saveHighscore(highscore,name,nmbOfSpecies,id);
              cancelMe = cancelAnimationFrame(cancelMe);
              return;
         }
@@ -333,7 +335,32 @@
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
 
+function saveHighscore(highscore,name,nmbOfSpecies,id){
+    var obj = {
+            id:id,
+            highscore:highscore,
+            name:name,
+            nmbOfSpecies:nmbOfSpecies
+            };
+    $.ajax({
+        url:"http://localhost:3000/save",
+        method:"post",
+        contentType:"application/json",
+        data:JSON.stringify(obj),
+        dataType:"JSON",
+        success:function(responseData){
+            console.log("highscore saved");
+            writeHighscore(responseData);
+        }
+    })
+}
 
+var writeHighscore = function(responseData){
+    $('#highscoreAusgabe').empty();
+    for(var key in  responseData){
+        $('#highscoreAusgabe').append($("<p id='" + responseData[key].id + "'>").html('name: '+ responseData[key].name + ', Anzahl Arten:' + responseData[key].nmbOfSpecies + ' Score: ' + responseData[key].highscore ));
+    }
+};
 
 function checkCollision(o1, k, l) {
     var o2;
@@ -462,6 +489,9 @@ function initial_collision2(x,y,width,height,arraytocheck){
     <div class="container-fluid ">
         <div class="row ">
             <div class="col-sm-4">
+                <div id="titel">
+                    <h1>Ökosystem Meer</h1>
+                </div>
             </div>
                 <div class="col-sm-4  ">
                     <div id="anzahlEingabe">
@@ -509,6 +539,8 @@ function initial_collision2(x,y,width,height,arraytocheck){
                 <canvas id="canvas" width="1400" height="800">
             </div>
             <div class="col-sm-4 ">
+                <div id="highscoreAusgabe"></div>
+                <button type="button" name="button">Sort by Species</button>
             </div>
             <div class="col-sm-4 ">
             </div>
