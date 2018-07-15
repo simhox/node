@@ -35,7 +35,7 @@ app.post('/speciesSort',function(request,response){
     // console.log(request.body);
     // console.log(request.body.id);
     highscores.sort(function(a, b) {
-        return a["nmbOfSpecies"] - b["nmbOfSpecies"] || a["highscore"] - b["highscore"];
+        return b["nmbOfSpecies"] - a["nmbOfSpecies"] || b["highscore"] - a["highscore"];
     });
    //var thejson = JSON.stringify(responseData);
     response.end(JSON.stringify(highscores));
@@ -46,8 +46,15 @@ app.post('/highscoreSort',function(request,response){
     // console.log(request.body);
     // console.log(request.body.id);
     highscores.sort(function(a, b) {
-        return a["highscore"] - b["highscore"] || a["nmbOfSpecies"] - b["nmbOfSpecies"];
+        return b["highscore"] - a["highscore"] || b["nmbOfSpecies"] - a["nmbOfSpecies"];
     });
    //var thejson = JSON.stringify(responseData);
     response.end(JSON.stringify(highscores));
+});
+
+app.post('/show',function(request,response){
+    console.log('POST Request an server (show)');
+    response.end(JSON.stringify(highscores));
+
+
 });
