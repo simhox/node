@@ -34,6 +34,10 @@
 * TitelDOne
 * Percentage Ausgabe
 * window resize change canvas width heigth (anpassen)
+***********************************************
+* Highscore Font
+* Score blink
+*
 */
 /*greensock für animationen */
 
@@ -160,6 +164,8 @@
         $("#start").hide();
         $("#anzahlEingabe").hide();
         $("#name").hide();
+        $("#erklaerung").hide();
+
 
         console.log(name);
         $('#nameAusgabe').html(name);
@@ -322,7 +328,9 @@
             $("#anzahlEingabe").show();
             $("#name").show();
             $("#thehighscore").show();
+            $("#erklaerung").show();
             $("#nameAusgabe").hide();
+            $("#deadSpecies").hide();
             saveHighscore(highscore,name,nmbOfSpecies,id);
              cancelMe = cancelAnimationFrame(cancelMe);
              return;
@@ -378,7 +386,7 @@ function saveHighscore(highscore,name,nmbOfSpecies,id){
 var writeHighscore = function(responseData){
     $('#highscoreAusgabe').empty();
     for(var key in  responseData){
-        $('#highscoreAusgabe').append($("<p id='" + responseData[key].id + "'>").html('Player: '+ responseData[key].name + ', Anzahl Arten:' + responseData[key].nmbOfSpecies + ' Score: ' + responseData[key].highscore ));
+        $('#highscoreAusgabe').append($("<p id='" + responseData[key].id + "'>").html('<div class="highscorelist">Spieler: '+ responseData[key].name + ',     Anzahl Arten:      ' + responseData[key].nmbOfSpecies + '      Score:         ' + responseData[key].highscore +"</div>" ));
     }
 };
 
@@ -537,11 +545,27 @@ $(document).on('click','#sortHighscore',function(){
         font-family: 'Press Start 2P', cursive;
     }
     .title{
-        font-size: 4em;
+        font-size: 10em;
         font-family: 'Nunito', sans-serif;
     }
     .blackborder{
         border:1px solid black;
+    }
+    .erklaerung{
+        font-size: 2em;
+        font-family: 'Nunito', sans-serif;
+        background-color:#DAF0F8;
+    }
+    #nameAusgabe{
+        font-size: 2em;
+        font-family: 'Nunito', sans-serif;
+    }
+    .anzahlarten{
+        font-size: 1.5em;
+    }
+    .highscorelist{
+        font-size: 1em;
+        font-family: 'Press Start 2P';
     }
 /*  radio button*/
 /* The container */
@@ -607,6 +631,27 @@ $(document).on('click','#sortHighscore',function(){
 	border-radius: 50%;
 	background: white;
 }
+/*button start */
+.button {
+    background-color: #5190A5; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+
+.button2:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
 
 </style>
 <body>
@@ -625,19 +670,24 @@ $(document).on('click','#sortHighscore',function(){
     </div>
     <div class="container-fluid ">
         <div class="row ">
-            <div class="col-sm-2">
-                <p id="erklaerung">
-                    Immer mehr Tierarten sterben aus. Aber warum ist das so schlimm für unser Ökosystem?
-                    Diese Simulation soll testen was mit dem Ökosystem passiert wenn es weniger oder mehr Arten gibt.
-                    Wie lange kann das Ökosystem intakt bleiben.
+            <div class="col-sm-4">
+                <div id="erklaerung">
+                    <p class="erklaerung">
+                        Immer mehr Tierarten sterben aus. Aber warum ist das so schlimm für unser Ökosystem?
+                        Diese Simulation soll testen was mit dem Ökosystem passiert wenn es weniger oder mehr Arten gibt.
+                        Wie lange kann das Ökosystem intakt bleiben.
+                    </p>
 
-                    In der Simulation werden je nach Auswahl 3-10 Arten generiert. Bei Berührung wird eine Spezies gefressen und die fressende Spezies vermehrt sich. 
-
-                </p>
+                    <p class="erklaerung">
+                        In der Simulation werden je nach Auswahl 3-10 Arten(je nach Auswahl) generiert.
+                        Bei Berührung zweier Spezies  wird eine Spezies gefressen und die fressende Spezies vermehrt sich.
+                        Das solange bis 40% der Spezies ausgestorben sind.
+                    </p>
+                </div>
             </div>
-                <div class="col-sm-8  ">
+                <div class="col-sm-2  ">
                     <div id="anzahlEingabe">
-                        Anzahl Arten:<br>
+                        <div class="anzahlarten" >Anzahl Arten:</div><br>
                         <label for="3" class="container">3
                             <input type="radio" name="nmbOfSpecies" value="3" checked>
                             <span class="checkmark"></span>
@@ -671,29 +721,32 @@ $(document).on('click','#sortHighscore',function(){
                             <span class="checkmark"></span>
                         </label>
                     </div>
+
                 </div>
-                <div class="col-sm-2 ">
+                <div class="col-sm-6 ">
+                    <p class="highscore">Spieler:</p><input type="text" id="name" placeholder="Name  hier eingeben">
+                    <div id="nameAusgabe" >Name</div><br>
+                    <button type="button" name="button" id="start" class="button button2" >Start</button>
+                    <div id="highscore"class="highscore">Score:</div><br>
+                    <div id="thehighscore">
+                        <div id="highscoreTitel" class="highscore">Highscores:</div>
+                        <div id="highscoreAusgabe"></div>
+                        <button type="button" name="button" id="sortSpecies">Sort by Species</button>
+                        <button type="button" name="button" id="sortHighscore">Sort by Highscore</button>
+                    </div>
                 </div>
         </div>
     </div>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-2 ">
-            </div>
-            <div class="col-sm-8 ">
+            <div class="col-sm-4 ">
 
-                <button type="button" name="button" id="start" >Start</button>
-                <p class="highscore">Spieler:</p><input type="text" id="name">
-                <div id="nameAusgabe" >Name</div>
-                <div id="highscore"class="highscore">Score:</div><br>
-                <div id="thehighscore">
-                    <div id="highscoreTitel">Highscores:</div>
-                    <div id="highscoreAusgabe"></div>
-                    <button type="button" name="button" id="sortSpecies">Sort by Species</button>
-                    <button type="button" name="button" id="sortHighscore">Sort by Highscore</button>
-                </div>
             </div>
-            <div class="col-sm-2 ">
+
+            <div class="col-sm-4 ">
+
+            </div>
+            <div class="col-sm-4 ">
                 <div id="deadSpecies" class="highscore">Ausgestorbene Arten:</div>
             </div>
         </div>

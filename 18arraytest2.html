@@ -7,6 +7,11 @@
     <title>arraytest2</title>
     <script src="jquery-3.3.1.min.js"></script>
 
+    <style>
+    #canvas{
+        border:1px solid black;
+    }
+</style>
 </head>
 <body>
 
@@ -15,18 +20,20 @@ $( document ).ready( function() {
     var arr = ["0","a","2","a","b"];
     var arr2 = arr.slice();
     arr2.splice(0,3);
-    console.log(arr);
-    console.log(arr2);
 
 
+var k;
 
+console.log(window.arr2);
 });
 
+
+$(document).on("click","#button",function(e){
+    console.log("button clicked");
+    console.dir(e);
+})
 </script>
-<style>
-#canvas{
-    border:1px solid black;
-}
-</style>
+
+<button id="button">Reload page</button>
 </body>
 </html>
