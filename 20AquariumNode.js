@@ -17,6 +17,7 @@ app.use(function(request,response,next){//use =egal welcher request kommt
 });
 var highscores =[];
 app.use(bp.json());//application-json
+/*speichern der highscores in array */
 app.post('/save',function(request,response){
     console.log('POST Request an server (save)');
     // console.log(request.body);
@@ -29,7 +30,7 @@ app.post('/save',function(request,response){
 
 
 });
-
+/* sort and send highscore array */
 app.post('/speciesSort',function(request,response){
     console.log('POST Request an server (speciesSort)');
     // console.log(request.body);
@@ -40,7 +41,7 @@ app.post('/speciesSort',function(request,response){
    //var thejson = JSON.stringify(responseData);
     response.end(JSON.stringify(highscores));
 });
-
+/* sort and send highscore array */
 app.post('/highscoreSort',function(request,response){
     console.log('POST Request an server (speciesSort)');
     // console.log(request.body);

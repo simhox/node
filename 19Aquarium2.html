@@ -6,40 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Aquarium</title>
     <script src="jquery-3.3.1.min.js"></script>
-
-
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="21aquarium.css" rel="stylesheet">
 </head>
 <script>
-/*
-*TODO:
-*Auswahl Anzahl Spezies (Auswahl anzahl fische?) DONE
-*Fressen und Duplikation DONE
-*Anzeige wieviele Arten ausgestorben( Ende bei mehr als x%) DONE
-*Hintergrundfarbe Fische DONE
-* zusätzliche Sprites (10) DONE
-* wenn möglich Hintergrundsprites DONE
-*Canvas Responsive (Frage anzahl Max Fische)//geht nicht
-* eats mechanism DONE
-* restart DONE
-* increase/decrease speed
-* framework?-> Bootstrap Done
-* Design oberhaul ( erklärung, single page application)
-* grösse des Lebensraums //same per species?
-* Highscore+Namenseingabe(gespeichert am Server, sortierbar(anzahl Spezies,Zeit))
-* Name required DONE
-* Eats bug bei wenigen fixen
-* TitelDOne
-* Percentage Ausgabe
-* window resize change canvas width heigth (anpassen)
-***********************************************
-* Highscore Font
-* Score blink
-*
-*/
-/*greensock für animationen */
+
 
     /*vars **********************************************************************/
     $(document).ready(function(){
@@ -62,9 +35,10 @@
     $("#deadSpecies").hide();
     $("#highscore").hide();
     $("#nameAusgabe").hide();
-    showHighscore();
+    $("#highscoreTitel").hide();
+    showHighscore();//ajax funktion
 
-    /*Daten*********************************************************************/
+    /*Sprites laden*********************************************************************/
     var image1 = new Image();
     image1.src ="fish.png";
     var image2 = new Image();
@@ -85,7 +59,7 @@
         {image:image1,posx:538,posy:388,width:53,heigth:75}
 
     ];
-
+    /*array aller spezies */
     var listOfSpecies =[
         {animal:"BlackWhite",amount:3,eats:["RedBlack"]},
         {animal:"RedBlack",amount:3,eats:["Red"]},
@@ -99,7 +73,7 @@
         {animal:"Seepferd",amount:3,eats:["BlackWhite"]}
 
     ];
-
+    /* funktion die je nach menge ausgewählter spezies zuweist welche spezies was frisst */
     function createEats(listOfSpecies){
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var nmbOfEats = Math.floor(nmbOfSpecies/3);
@@ -114,9 +88,6 @@
         var shortListOfSpecies= listOfSpecies.slice();
 
         shortListOfSpecies = shortListOfSpecies.splice(0,nmbOfSpecies);
-
-        //find last of array animals to create full loop
-        //take random element from animalarr and add to eats, if not listOfSpecies.species == animal, do x times, until every eats has x members
 
         for(let j=0; j<nmbOfEats;j++){
             var animalTemp= animalArr;
@@ -137,55 +108,57 @@
         // console.log(shortListOfSpecies);
         return shortListOfSpecies;
     }
-
+    /* helper funktion für createEats */
     function eats_randomize_helper(animalArr,nmbOfSpecies){
         var i = Math.floor(Math.random()*animalArr.length);
         return animalArr[i];
     }
 
+    /* start der animation bei betätigen des start buttons */
     $(document).on("click","#start",function(){
+        /* check ob name eingegeben wurde sonst wird nicht gestartet */
         name = $("#name").val();
         if(name==""||name==undefined){
             return;
         }
         id++;
-        // restart
+        // reset von variablen
             ctx.clearRect(0,0,canvas.width,canvas.height);
             arrayOfSpecies =[];
             nmbOfDeadSpecies=0;
             nmbOfSpecies =0;
             highscore=0;
-        //end of restart
+        //reset
+        /* ui anzeige änderungen */
         $("#canvas").show();
         $("#deadSpecies").show();
         $("#highscore").show();
         $("#nameAusgabe").show();
+        $("#titel").hide();
         $("#thehighscore").hide();
         $("#start").hide();
         $("#anzahlEingabe").hide();
         $("#name").hide();
         $("#erklaerung").hide();
-
-
-        console.log(name);
         $('#nameAusgabe').html(name);
 
         nmbOfSpecies=$('input[name=nmbOfSpecies]:checked').val();
         var tempListOfSpecies = createEats(listOfSpecies);
-        //console.log(tempListOfSpecies);
+        /* erzeugen der daten für anzeige */
         for(let i = 0; i<nmbOfSpecies; i++){
             createSpecies(tempListOfSpecies[i].animal,tempListOfSpecies[i].amount,tempListOfSpecies[i].eats,fishSprites[i]);
         }
         requestAnimationFrame(loop);
     });
-
+    /*kreiert spezies zum anzeigen mit anzahl,art, darstellung usw */
     function createSpecies(species,quantity,eats,fishSprite){
         var temparr = [];
         var x = 0;
         var y = 0;
         var cnt =0;
+            /* zufällige position an der der fish im canvas gesetz werden soll. muss innerhalb sein und nicht bereits besetzt */
             for(let i =0; i<quantity;i++){
-                x =createX();
+                x =createX();//erzeugt zufällige pos im canvas
                 y= createY();
                 while(initial_collision(x,y,fishSprite.width,fishSprite.heigth,arrayOfSpecies,temparr)){
                     y= createY();
@@ -195,8 +168,8 @@
                     species:species,
                     x:x,
                     y:y,
-                    vx:((Math.random()*10)),
-                    vy:((Math.random()*10)),
+                    vx:((Math.random()*3)),//speed
+                    vy:((Math.random()*3)),//speed
                     height:fishSprite.heigth,
                     width:fishSprite.width,
                     posy:fishSprite.posy,
@@ -210,7 +183,7 @@
 
     }
 
-
+//erzeugt zufällige pos im canvas
     function createX(){
         var x;
         x = Math.random()*canvasWidth -80;
@@ -219,7 +192,7 @@
         }
         return x;
     }
-
+//erzeugt zufällige pos im canvas
     function createY() {
         var y;
         y = Math.random()*canvasHeight -80;
@@ -228,6 +201,7 @@
         }
         return y;
     }
+    /* überprüft ob position im canvas bereits besetzt ist */
     function initial_collision(x,y,width,height,arraytocheck,temparr){
         //arrayOfSpeciescheck
         for(let k =0;k< arraytocheck.length;k++){
@@ -261,8 +235,7 @@
         return false;//return wenn keine collision
     }//initial_collision end
 
-    /*Execute*********************************************************************/
-    /*Draw*********************************************************************/
+    //highscore methode, zählt jede sekunde die die simulation läuft eins hinauf
     var cancelMe = "";
     var highscore =0;
     var currentTime = new Date();
@@ -273,29 +246,32 @@
         if(time-currentTime>milliseconds){
             highscore++;
             currentTime= new Date();
-            $('#highscore').html('Score: '+highscore);
+            $('#highscore').html('Sekunden: '+highscore);
         }
     }
-
+    //wird von requestAnimationFrame ausgeführt
     function loop(){
         draw();
         increaseHighscore();
     }
+    //draw  funktion
     function draw(){
         ctx.clearRect(0,0,canvasWidth,canvasHeight);
         ctx.beginPath();
-        // ctx.drawImage(image2,seaweedSprites[0].posx,seaweedSprites[0].posy,seaweedSprites[0].width,seaweedSprites[0].height,500,500,seaweedSprites[0].width,seaweedSprites[0].height);
+        //zugriff auf jeden fish im array. da 3d array zwei for loops
         for(let i = arrayOfSpecies.length -1;i>=0;i--){
-            //console.log(arrayOfSpecies);
             for(var j =arrayOfSpecies[i].length-1; j>=0;j--){
+                //zeichnen des elements
                 ctx.drawImage(image1,arrayOfSpecies[i][j].posx,arrayOfSpecies[i][j].posy,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height,arrayOfSpecies[i][j].x,arrayOfSpecies[i][j].y,arrayOfSpecies[i][j].width,arrayOfSpecies[i][j].height );
-
+                //richtungsänderung wenn fish an wand kommt
                 if((arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx + arrayOfSpecies[i][j].width > canvasWidth) || (arrayOfSpecies[i][j].x + arrayOfSpecies[i][j].vx < 0)){
                     arrayOfSpecies[i][j].vx = - arrayOfSpecies[i][j].vx;
                 }
+                //richtungsänderung wenn fish an wand kommt
                 if((arrayOfSpecies[i][j].y + arrayOfSpecies[i][j].vy +arrayOfSpecies[i][j].height > canvasHeight) || (arrayOfSpecies[i][j].y+ arrayOfSpecies[i][j].vy < 0)){
                     arrayOfSpecies[i][j].vy = - arrayOfSpecies[i][j].vy;
                 }
+                //beschleunigung
                arrayOfSpecies[i][j].x +=arrayOfSpecies[i][j].vx;
                arrayOfSpecies[i][j].y +=arrayOfSpecies[i][j].vy;
                 //collision
@@ -303,8 +279,7 @@
             }//end of inner for loop
         }//end of outer for loop
         //check if end
-            //nmb of species = 100%
-            //nmb of alive species
+        /* check wieviele verschiedene arten von fischen noch am leben sind(arten nicht fische gesamt) */
         var aliveSpecies=[];
         for(let h=0; h<arrayOfSpecies.length;h++){
             for(let g=0; g<arrayOfSpecies[h].length;g++){
@@ -316,11 +291,10 @@
         }//end of h loop
         //--------ENDING---------------------------------------------------------------------------
         var nmbOfAliveSpecies = aliveSpecies.length;
-        var percentage = nmbOfAliveSpecies/nmbOfSpecies;
-        // console.log(percentage);
-        // console.log(aliveSpecies);
+        var percentage = nmbOfAliveSpecies/nmbOfSpecies;//division lebendige spezies durch gesamt start spezies
         var nmbOfDeadSpecies = nmbOfSpecies-nmbOfAliveSpecies;
         $('#deadSpecies').html('Ausgestorbene Arten: '+nmbOfDeadSpecies);
+        //wenn mehr als 40% der spezies ausgestorben sind dann (show start ui und stop drawing)
         if(percentage <0.6){
             // console.log("game over");
             $("#canvas").hide();
@@ -329,6 +303,7 @@
             $("#name").show();
             $("#thehighscore").show();
             $("#erklaerung").show();
+            $("#title").show();
             $("#nameAusgabe").hide();
             $("#deadSpecies").hide();
             saveHighscore(highscore,name,nmbOfSpecies,id);
@@ -338,7 +313,7 @@
         //---------------------------------------------------------------------------------------
         for(let k =0;k< arrayOfSpecies.length;k++){
             for(let l=0;l<arrayOfSpecies[k].length;l++){
-
+                //was passiert wenn collision zweier fische
                 checkCollision(arrayOfSpecies[k][l], k, l);
 
 
@@ -348,6 +323,7 @@
         cancelMe = requestAnimationFrame(loop);
     }//end of draw
 
+/* liefert highscores vom server zurück */
 function showHighscore(){
 
     $.ajax({
@@ -362,7 +338,7 @@ function showHighscore(){
     })
 }
 
-
+/* speichert highscore der simulation auf den server */
 function saveHighscore(highscore,name,nmbOfSpecies,id){
     var obj = {
             id:id,
@@ -383,24 +359,25 @@ function saveHighscore(highscore,name,nmbOfSpecies,id){
     })
 }
 
+/* schreibt highscore ins highscore feld */
 var writeHighscore = function(responseData){
     $('#highscoreAusgabe').empty();
     for(var key in  responseData){
         $('#highscoreAusgabe').append($("<p id='" + responseData[key].id + "'>").html('<div class="highscorelist">Spieler: '+ responseData[key].name + ',     Anzahl Arten:      ' + responseData[key].nmbOfSpecies + '      Score:         ' + responseData[key].highscore +"</div>" ));
     }
 };
-
+/* was passiert wenn 2 fische kollidieren */
 function checkCollision(o1, k, l) {
     var o2;
     for(var hh = 0; hh < arrayOfSpecies.length;hh++){
         for(let mm =0;mm < arrayOfSpecies[hh].length;mm++){
 
-
+            //nicht mit sich selbst
             if(hh == k && mm == l)
                 continue;
 
             o2 = arrayOfSpecies[hh][mm];
-
+            //<kollisionsabfrage></kollisionsabfrage>
         var no_collision = (
             o1.x > o2.x + o2.width ||
             o1.x + o1.width < o2.x ||
@@ -409,16 +386,12 @@ function checkCollision(o1, k, l) {
         );
 
         if(no_collision == false){
-                // ctx.fillText(o1.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y);
-                // ctx.fillText(o2.x,arrayOfSpecies[k][l].x,arrayOfSpecies[k][l].y+50);
-                  o1.vy= -o1.vy;
+                //richtungsänderung wenn kollision
+                 o1.vy= -o1.vy;
                  o1.vx= -o1.vx;
-
-
-
                 if(o2.species!=o1.species){
-                    // console.log("collision:"+o2.species +" "+o1.species);
                     //check if eats-> params: species1,species2
+                        //was passiert wenn eine spezies die andere frisst( spezies befindet sich im eats array(gesetzt von createEats))
                         for(let h =0;h<o2.eats.length;h++){
 
                              if(o2.eats[h]==o1.species ){
@@ -432,9 +405,7 @@ function checkCollision(o1, k, l) {
                                          return target.hasOwnProperty(key)&&entry[key] === target[key];
                                      });
                                  });
-                                 // console.log("index: "+index);
                                 if(index>-1){
-                                    //console.log("o2eatso1");
 
                                     //löschen wenn eats
                                     arrayOfSpecies[k].splice(index,1);
@@ -446,7 +417,7 @@ function checkCollision(o1, k, l) {
                                         x =createX();
                                         y =createY();
                                     }
-
+                                    //fress event erstellt neuen fish der fressenden spezies
                                    arrayOfSpecies[k].push({
                                         species:o2.species,
                                         x:x,
@@ -472,7 +443,7 @@ function checkCollision(o1, k, l) {
         }//end of mm loop
     }//end of hh loop
 }//end of checkCollision
-
+/* neu erstelleter fish muss im canvas plaziert werden ohne collision */
 function initial_collision2(x,y,width,height,arraytocheck){
 
     for(let i=0; i<arraytocheck.length;i++){
@@ -495,7 +466,7 @@ function initial_collision2(x,y,width,height,arraytocheck){
 
 
 }
-
+/* sortieren der highscore nach anzahl spezies */
 $(document).on('click','#sortSpecies',function(){
     console.log("sortSpecies button clicked");
 
@@ -511,7 +482,7 @@ $(document).on('click','#sortSpecies',function(){
         }
     })
 });
-
+/* sortieren der highscore nach höchstem highscore */
 $(document).on('click','#sortHighscore',function(){
     console.log("sortSpecies button clicked");
 
@@ -534,123 +505,7 @@ $(document).on('click','#sortHighscore',function(){
 });//end of document.ready function
 </script>
 <style >
-    *{
-        background-color:lightblue;
-    }
-    #canvas{
-        background-color: lightblue;
-    }
-    .highscore{
-        font-size: 1.5em;
-        font-family: 'Press Start 2P', cursive;
-    }
-    .title{
-        font-size: 10em;
-        font-family: 'Nunito', sans-serif;
-    }
-    .blackborder{
-        border:1px solid black;
-    }
-    .erklaerung{
-        font-size: 2em;
-        font-family: 'Nunito', sans-serif;
-        background-color:#DAF0F8;
-    }
-    #nameAusgabe{
-        font-size: 2em;
-        font-family: 'Nunito', sans-serif;
-    }
-    .anzahlarten{
-        font-size: 1.5em;
-    }
-    .highscorelist{
-        font-size: 1em;
-        font-family: 'Press Start 2P';
-    }
-/*  radio button*/
-/* The container */
-.container {
-    display: block;
-    position: relative;
-    padding-left: 35px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    font-size: 22px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
 
-/* Hide the browser's default radio button */
-.container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-/* Create a custom radio button */
-.checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 25px;
-    width: 25px;
-    background-color: #eee;
-    border-radius: 50%;
-}
-
-/* On mouse-over, add a grey background color */
-.container:hover input ~ .checkmark {
-    background-color: #ccc;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked ~ .checkmark {
-    background-color: #2196F3;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked ~ .checkmark:after {
-    display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
- 	top: 9px;
-	left: 9px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
-}
-/*button start */
-.button {
-    background-color: #5190A5; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-
-
-.button2:hover {
-    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-}
 
 
 </style>
@@ -673,13 +528,13 @@ $(document).on('click','#sortHighscore',function(){
             <div class="col-sm-4">
                 <div id="erklaerung">
                     <p class="erklaerung">
-                        Immer mehr Tierarten sterben aus. Aber warum ist das so schlimm für unser Ökosystem?
-                        Diese Simulation soll testen was mit dem Ökosystem passiert wenn es weniger oder mehr Arten gibt.
-                        Wie lange kann das Ökosystem intakt bleiben.
+                        Immer mehr Tierarten sterben aus. Ist das schlecht fürs Ökosystem?
+                        Diese Simulation soll testen was mit dem Ökosystem passiert wenn es mehr oder weniger Artenvielfalt gibt
+                        und wie lange kann das Ökosystem funktionieren?
                     </p>
 
                     <p class="erklaerung">
-                        In der Simulation werden je nach Auswahl 3-10 Arten(je nach Auswahl) generiert.
+                        In der Simulation werden je nach Auswahl 4-10 Arten  generiert.
                         Bei Berührung zweier Spezies  wird eine Spezies gefressen und die fressende Spezies vermehrt sich.
                         Das solange bis 40% der Spezies ausgestorben sind.
                     </p>
@@ -688,12 +543,8 @@ $(document).on('click','#sortHighscore',function(){
                 <div class="col-sm-2  ">
                     <div id="anzahlEingabe">
                         <div class="anzahlarten" >Anzahl Arten:</div><br>
-                        <label for="3" class="container">3
-                            <input type="radio" name="nmbOfSpecies" value="3" checked>
-                            <span class="checkmark"></span>
-                        </label>
                         <label  class="container" >4
-                            <input type="radio" name="nmbOfSpecies" value="4">
+                            <input type="radio" name="nmbOfSpecies" value="4" checked>
                             <span class="checkmark"></span>
                         </label>
                         <label class="container" >5
@@ -720,6 +571,7 @@ $(document).on('click','#sortHighscore',function(){
                             <input type="radio" name="nmbOfSpecies" value="10"><br>
                             <span class="checkmark"></span>
                         </label>
+                        *je Art werden 3 Tiere ausgesetzt
                     </div>
 
                 </div>
@@ -729,7 +581,7 @@ $(document).on('click','#sortHighscore',function(){
                     <button type="button" name="button" id="start" class="button button2" >Start</button>
                     <div id="highscore"class="highscore">Score:</div><br>
                     <div id="thehighscore">
-                        <div id="highscoreTitel" class="highscore">Highscores:</div>
+                        <div id="highscoreTitel" class="highscore">Sekunden:</div>
                         <div id="highscoreAusgabe"></div>
                         <button type="button" name="button" id="sortSpecies">Sort by Species</button>
                         <button type="button" name="button" id="sortHighscore">Sort by Highscore</button>
